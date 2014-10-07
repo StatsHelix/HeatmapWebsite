@@ -29,16 +29,8 @@ namespace DemoInfo.DP
 
             foreach (var prop in updates)
             {
-
-                //Console.Write(prop.Prop.Name + ": ");
-
                 var val = PropDecoder.DecodeProp(prop, reader);
-
                 Properties[prop.Prop.Name] = val;
-
-                //Console.WriteLine(val);
-
-
             }
         }
 

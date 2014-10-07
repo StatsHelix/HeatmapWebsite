@@ -135,33 +135,33 @@ namespace DemoInfo
     struct PlayerInfo
     {
 	    /// version for future compatibility
-	    long Version { get; set; }
+	    public long Version { get; set; }
 
 	    // network xuid
-	    long XUID { get; set; }
+        public long XUID { get; set; }
 
 	    // scoreboard information
-        string Name { get; set; } //MAX_PLAYER_NAME_LENGTH=128
+        public string Name { get; set; } //MAX_PLAYER_NAME_LENGTH=128
 
 	    // local server user ID, unique while server is running
-	    int	UserID { get; set; }
+        public int UserID { get; set; }
 
 	    // global unique player identifer
-	    string GUID { get; set; } //33bytes
+        public string GUID { get; set; } //33bytes
 
 	    // friends identification number
-	    int	FriendsID;
+        public int FriendsID { get; set; }
 	    // friends name
-	    string FriendsName { get; set; } //128
+        public string FriendsName { get; set; } //128
 
 	    // true, if player is a bot controlled by game.dll
-	    bool IsFakePlayer  { get; set; }
+        public bool IsFakePlayer { get; set; }
 
 	    // true if player is the HLTV proxy
-	    bool IsHLTBV { get; set; }
+        public bool IsHLTV { get; set; }
 
 	    // custom files CRC for this player
-	    long CustomFilesIGNORE { get; set; } //4
+        public long CustomFilesIGNORE { get; set; } //4
 
 	    // this counter increases each time the server downloaded a new file
         byte FilesDownloaded { get; set; }
@@ -170,16 +170,15 @@ namespace DemoInfo
         {
             return new PlayerInfo()
             {
-                Version = reader.ReadInt64(),
-                XUID = reader.ReadInt64(),
+                Version = reader.ReadInt64SwapEndian(),
+                XUID = reader.ReadInt64SwapEndian(),
                 Name = reader.ReadCString(128),
-                UserID = reader.ReadInt32(),
+                UserID = reader.ReadInt32SwapEndian(),
                 GUID = reader.ReadCString(33),
-                FriendsID = reader.ReadInt32(),
+                FriendsID = reader.ReadInt32SwapEndian(),
+                FriendsName=  reader.ReadCString(128),
                 IsFakePlayer = reader.ReadBoolean(),
-                IsHLTBV = reader.ReadBoolean(),
-                CustomFilesIGNORE = reader.ReadInt64() + reader.ReadInt64() + reader.ReadInt64() + reader.ReadInt64(),
-                FilesDownloaded = reader.ReadByte()
+                IsHLTV = reader.ReadBoolean()
             };
         }
 

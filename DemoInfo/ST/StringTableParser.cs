@@ -42,10 +42,10 @@ namespace DemoInfo.ST
 
                     byte[] data = reader.ReadBytes(userDataSize);
 
-                    if (isUserInfo && userDataSize == PlayerInfo.SizeOf)
+                    if (isUserInfo && data.Length >= 340)
                     {
-                        //read the user-info
-                        throw new NotImplementedException("Not implemented here.");
+                        PlayerInfo info = PlayerInfo.ParseFrom(new BinaryReader(new MemoryStream(data)));
+
                     }
                 }
             }

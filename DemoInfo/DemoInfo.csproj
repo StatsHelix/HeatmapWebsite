@@ -48,8 +48,11 @@
     <Compile Include="DemoParser.cs" />
     <Compile Include="DP\DemoPacketParser.cs" />
     <Compile Include="DP\Entity.cs" />
+    <Compile Include="DP\Handler\GenericCreateStringTablesHandler.cs" />
     <Compile Include="DP\Handler\PacketEntitesHandler.cs" />
     <Compile Include="DP\Handler\PropDecoder.cs" />
+    <Compile Include="DP\Handler\CreateStringTableUserInfoHandler.cs" />
+    <Compile Include="DP\Handler\UpdateStringTableUserInfoHandler.cs" />
     <Compile Include="DP\IMessageParser.cs" />
     <Compile Include="DT\DataTableParser.cs" />
     <Compile Include="DT\SendTableProperty.cs" />

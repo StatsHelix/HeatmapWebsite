@@ -1,5 +1,6 @@
 ﻿using DemoInfo.DP;
 using DemoInfo.DT;
+using DemoInfo.Messages;
 using DemoInfo.ST;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,9 @@ namespace DemoInfo
         StringTableParser StringTables = new StringTableParser();
         DemoPacketParser PacketParser;
 
-       
+        public Dictionary<int, PlayerInfo> Players = new Dictionary<int, PlayerInfo>();
+
+        public List<CSVCMsg_CreateStringTable> stringTables = new List<CSVCMsg_CreateStringTable>();
 
         public DemoParser(Stream input)
         {

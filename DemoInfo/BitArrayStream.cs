@@ -91,12 +91,14 @@ namespace demoinfosharp
 
         public string ReadString(int size)
         {
-            List<Byte> result = new List<byte>(512);
+            List<byte> result = new List<byte>(512);
             int pos=0;
             while (true)
             {
                 byte a = ReadByte();
                 if (a == 0)
+                    break;
+                else if (a == 10)
                     break;
 
                 result.Add(a);

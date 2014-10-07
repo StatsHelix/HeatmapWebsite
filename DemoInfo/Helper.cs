@@ -16,6 +16,16 @@ namespace DemoInfo
             return ReadCString(reader, length, Encoding.Default);
         }
 
+        public static int ReadInt32SwapEndian(this BinaryReader reader)
+        {
+            return BitConverter.ToInt32(reader.ReadBytes(4).Reverse().ToArray(), 0);
+        }
+
+        public static long ReadInt64SwapEndian(this BinaryReader reader)
+        {
+            return BitConverter.ToInt64(reader.ReadBytes(8).Reverse().ToArray(), 0);
+        }
+
         public static string Reverse(this string s)
         {
             char[] charArray = s.ToCharArray();
@@ -25,7 +35,7 @@ namespace DemoInfo
 
         public static string ReadCString(this BinaryReader reader, int length, Encoding encoding)
         {
-            return encoding.GetString(reader.ReadBytes(length)).TrimEnd('\0');
+            return encoding.GetString(reader.ReadBytes(length)).Split(new char[] { '\0' }, 2)[0];  
         }
 
         public static int ReadVarInt32(this BinaryReader reader)

@@ -68,7 +68,9 @@ namespace DemoInfo.DP
                     if (parser.CanHandleMessage(result))
                     {
                         parser.ApplyMessage(result, demo);
-                        break;
+
+                        if(parser.GetPriority() > 0)
+                            break;
                     }
                 }
                 
