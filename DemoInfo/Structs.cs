@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DemoInfo
 {
-    struct DemoHeader
+    public struct DemoHeader
     {
         const int MAX_OSPATH = 260;
 
@@ -43,7 +43,7 @@ namespace DemoInfo
         }
     }
 
-    struct Vector
+    public struct Vector
     {
         public float X { get; set; }
         public float Y { get; set; }
@@ -132,7 +132,7 @@ namespace DemoInfo
         }
     }
     
-    struct PlayerInfo
+    public class PlayerInfo
     {
 	    /// version for future compatibility
 	    public long Version { get; set; }
@@ -160,26 +160,41 @@ namespace DemoInfo
 	    // true if player is the HLTV proxy
         public bool IsHLTV { get; set; }
 
-	    // custom files CRC for this player
-        public long CustomFilesIGNORE { get; set; } //4
+        // custom files CRC for this player
+        public int customFiles0 { get; set; }
+        public int customFiles1 { get; set; }
+        public int customFiles2 { get; set; }
+        public int customFiles3 { get; set; }
+
+        byte filesDownloaded { get; set; }
 
 	    // this counter increases each time the server downloaded a new file
         byte FilesDownloaded { get; set; }
 
+        public PlayerInfo(BinaryReader reader)
+        {
+            Version = reader.ReadInt64SwapEndian();
+            XUID = reader.ReadInt64SwapEndian();
+            Name = reader.ReadCString(128);
+            UserID = reader.ReadInt32SwapEndian();
+            GUID = reader.ReadCString(33);
+            FriendsID = reader.ReadInt32SwapEndian();
+            FriendsName = reader.ReadCString(128);
+
+            IsFakePlayer = reader.ReadBoolean();
+            IsHLTV = reader.ReadBoolean();
+
+            customFiles0 = reader.ReadInt32();
+            customFiles1 = reader.ReadInt32();
+            customFiles2 = reader.ReadInt32();
+            customFiles3 = reader.ReadInt32();
+
+            filesDownloaded = reader.ReadByte();
+        }
+
         public static PlayerInfo ParseFrom(BinaryReader reader)
         {
-            return new PlayerInfo()
-            {
-                Version = reader.ReadInt64SwapEndian(),
-                XUID = reader.ReadInt64SwapEndian(),
-                Name = reader.ReadCString(128),
-                UserID = reader.ReadInt32SwapEndian(),
-                GUID = reader.ReadCString(33),
-                FriendsID = reader.ReadInt32SwapEndian(),
-                FriendsName=  reader.ReadCString(128),
-                IsFakePlayer = reader.ReadBoolean(),
-                IsHLTV = reader.ReadBoolean()
-            };
+            return new PlayerInfo(reader);
         }
 
         public static int SizeOf { get { return 8 + 8 + 128 + 4 + 3 + 4 + 1 + 1 + 4 * 8 + 1; } }

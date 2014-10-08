@@ -45,6 +45,7 @@ namespace DemoInfo.ST
                     if (isUserInfo && data.Length >= 340)
                     {
                         PlayerInfo info = PlayerInfo.ParseFrom(new BinaryReader(new MemoryStream(data)));
+                        
 
                     }
                 }

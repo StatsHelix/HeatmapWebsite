@@ -103,8 +103,8 @@ namespace DemoInfo.DP.Handler
                 BinaryReader playerReader = new BinaryReader(new MemoryStream(userdata));
                 PlayerInfo info = PlayerInfo.ParseFrom(playerReader);
 
-
-                parser.Players[info.UserID] = info;
+                if(int.TryParse(entry, out nEntryBits))
+                    parser.RawPlayers[int.Parse(entry)] = info;
             }
 
         }

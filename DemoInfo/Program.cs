@@ -12,7 +12,7 @@ namespace DemoInfo
         static void Main(string[] args)
         {
             DemoParser parser = new DemoParser(File.OpenRead("C:/VPiBP.dem"));
-            parser.ParseDemo();
+            parser.ParseDemo(true);
         }
     }
 }

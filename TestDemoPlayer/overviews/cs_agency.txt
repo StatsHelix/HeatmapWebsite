@@ -1,0 +1,7 @@
+"cs_agency"
+{
+"material" "overviews/cs_agency"
+"pos_x"	 "-2947" //MAP X COORDS
+"pos_y"	 "2492" //MAP Y COORDS
+"scale"	 "5"	 //MAP SCALE
+}

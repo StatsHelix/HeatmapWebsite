@@ -48,6 +48,7 @@
     <Compile Include="DemoParser.cs" />
     <Compile Include="DP\DemoPacketParser.cs" />
     <Compile Include="DP\Entity.cs" />
+    <Compile Include="DP\Handler\GameEventHandler.cs" />
     <Compile Include="DP\Handler\GenericCreateStringTablesHandler.cs" />
     <Compile Include="DP\Handler\PacketEntitesHandler.cs" />
     <Compile Include="DP\Handler\PropDecoder.cs" />
@@ -58,9 +59,11 @@
     <Compile Include="DT\SendTableProperty.cs" />
     <Compile Include="DT\SendTable.cs" />
     <Compile Include="DT\ServerClass.cs" />
+    <Compile Include="Events.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Messages\netmessages.cs" />
     <Compile Include="Messages\usermessages.cs" />
+    <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Structs.cs" />
@@ -70,7 +73,6 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

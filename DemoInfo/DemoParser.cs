@@ -11,16 +11,39 @@ using System.Threading.Tasks;
 
 namespace DemoInfo
 {
-    class DemoParser
+    public class DemoParser
     {
+        #region Events
+        /// <summary>
+        /// Called once when the Header of the demo is parsed
+        /// </summary>
+        public event EventHandler<HeaderParsed> HeaderParsed;
+
+        public event EventHandler<MatchStarted> MatchStarted;
+
+        public event EventHandler<TickDone> TickDone;
+        #endregion
+
+        #region Information
+        public string Map
+        {
+            get { return Header.MapName; }
+        }
+
+        #endregion
+
         BinaryReader reader;
         public DemoHeader Header { get; private set; }
 
-        public DataTableParser DataTables = new DataTableParser();
+        internal DataTableParser DataTables = new DataTableParser();
         StringTableParser StringTables = new StringTableParser();
         DemoPacketParser PacketParser;
 
-        public Dictionary<int, PlayerInfo> Players = new Dictionary<int, PlayerInfo>();
+        public List<Player> Players = new List<Player>();
+
+        internal Dictionary<int, Entity> entites = new Dictionary<int, Entity>();
+
+        public Dictionary<int, PlayerInfo> RawPlayers = new Dictionary<int, PlayerInfo>();
 
         public List<CSVCMsg_CreateStringTable> stringTables = new List<CSVCMsg_CreateStringTable>();
 
@@ -30,14 +53,49 @@ namespace DemoInfo
             PacketParser = new DemoPacketParser(this);
         }
 
-        public void ParseDemo()
+        public void ParseDemo(bool fullParse)
         {
             ParseHeader();
 
-            while (ParseTick())
+            if (HeaderParsed != null)
+                HeaderParsed(this, new HeaderParsed(Header));
+
+            if(fullParse)
             {
-                
+                while (ParseNextTick())
+                {
+                }
             }
+                
+        }
+
+        public bool ParseNextTick()
+        {
+
+            bool b = ParseTick();
+            Players.Clear();
+            foreach (var entity in entites.Values.Where(a => a.ServerClass.Name == "CCSPlayer"))
+            {
+                if(entity.Properties.ContainsKey("m_vecOrigin"))
+                {
+                    Player p = new Player();
+                    p.EntityID = entity.ID;
+                    p.Position = (Vector)entity.Properties["m_vecOrigin"];
+                    
+                    //p.Name = RawPlayers[entity.ID - 1].Name;
+                    //p.SteamID = RawPlayers[entity.ID - 1].FriendsID;
+                    //p.Team = (Team)entity.Properties["m_iTeamNum"];
+                    Players.Add(p);
+                }
+            }
+
+            if (b)
+            {
+                if (TickDone != null)
+                    TickDone(this, new TickDone());
+            }
+
+            return b;
         }
 
         private void ParseHeader()
@@ -49,6 +107,8 @@ namespace DemoInfo
 
             if (header.Protocol != 4)
                 throw new Exception("Invalid Demo-Protocol");
+
+            Header = header;
         }
 
         private bool ParseTick()
@@ -99,5 +159,12 @@ namespace DemoInfo
 
             PacketParser.ParsePacket(packet);
         }
+
+        #region EventCaller
+        internal void RaiseMatchStarted()
+        {
+            MatchStarted(this, new MatchStarted());
+        }
+        #endregion
     }
 }

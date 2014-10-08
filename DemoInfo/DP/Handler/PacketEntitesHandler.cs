@@ -12,8 +12,6 @@ namespace DemoInfo.DP.Handler
 {
     class PacketEntitesHandler : IMessageParser
     {
-        Dictionary<int, Entity> entites = new Dictionary<int, Entity>();
-
         public bool CanHandleMessage(IExtensible message)
         {
             return message.GetType() == typeof(Messages.CSVCMsg_PacketEntities);
@@ -42,7 +40,7 @@ namespace DemoInfo.DP.Handler
                     else
                     {
                         //preserve
-                        Entity e = entites[currentEntity];
+                        Entity e = parser.entites[currentEntity];
                         //Console.ForegroundColor = ConsoleColor.Green;
                         //Console.WriteLine("Entity #" + e.ID + ": " + e.ServerClass.Name);
                         //Console.ResetColor();
@@ -54,13 +52,9 @@ namespace DemoInfo.DP.Handler
                     //leave
                     if (reader.ReadBit())
                     {
-                        
                     }
 
-                    if (!entites.ContainsKey(currentEntity))
-                        throw new Exception("Out of sync");
-
-                    entites.Remove(currentEntity);
+                    parser.entites.Remove(currentEntity);
                 }
 
             }
@@ -79,7 +73,7 @@ namespace DemoInfo.DP.Handler
             //Console.WriteLine("Entity #"+id+": " + entityClass.Name);
             //Console.ResetColor();
 
-            entites[newEntity.ID] = newEntity;
+            parser.entites[newEntity.ID] = newEntity;
             return newEntity;
         }
 
