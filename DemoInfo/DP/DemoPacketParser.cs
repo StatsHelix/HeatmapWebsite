@@ -9,31 +9,12 @@ using System.Threading.Tasks;
 
 namespace DemoInfo.DP
 {
-    class DemoPacketParser
+	public static class DemoPacketParser
     {
-        private DemoParser demo;
+		private static IEnumerable<IMessageParser> Parsers = Assembly.GetExecutingAssembly().GetTypes().Where(a => a.GetInterfaces().Contains(typeof(IMessageParser)))
+			.Select(parser => (IMessageParser)parser.GetConstructor(new Type[0]).Invoke(new object[0])).OrderByDescending(a => a.GetPriority()).ToArray();
 
-        List<IMessageParser> parsers = new List<IMessageParser>();
-
-        public DemoPacketParser(DemoParser parser)
-        {
-            this.demo = parser;
-
-            InitializeHandlers();
-        }
-
-        private void InitializeHandlers()
-        {
-            foreach(var parser in Assembly.GetExecutingAssembly().GetTypes().Where(a => a.GetInterfaces().Contains(typeof(IMessageParser))))
-            {
-                IMessageParser p = (IMessageParser)parser.GetConstructor(new Type[0]).Invoke(new object[0]);
-                parsers.Add(p);
-            }
-
-            parsers.OrderByDescending(a => a.GetPriority());
-        }
-
-        public void ParsePacket(byte[] data)
+		public static void ParsePacket(byte[] data, DemoParser demo)
         {
             BinaryReader reader = new BinaryReader(new MemoryStream(data));
 
@@ -63,7 +44,7 @@ namespace DemoInfo.DP
 
                 var result = reader.ReadProtobufMessage(toParse, ProtoBuf.PrefixStyle.Base128);
 
-                foreach (var parser in parsers)
+                foreach (var parser in Parsers)
                 {
                     if (parser.CanHandleMessage(result))
                     {
