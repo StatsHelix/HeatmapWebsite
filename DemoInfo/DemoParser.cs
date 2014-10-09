@@ -22,6 +22,8 @@ namespace DemoInfo
         public event EventHandler<MatchStarted> MatchStarted;
 
         public event EventHandler<TickDone> TickDone;
+
+		public event EventHandler<PlayerKilled> PlayerKilled;
         #endregion
 
         #region Information
@@ -119,7 +121,8 @@ namespace DemoInfo
         private bool ParseTick()
         {
             DemoCommand command = (DemoCommand)reader.ReadByte();
-            int TickNum = reader.ReadInt32();
+
+			int TickNum = reader.ReadInt32();
             int playerSlot = reader.ReadByte();
 
             switch (command)
@@ -166,8 +169,15 @@ namespace DemoInfo
         #region EventCaller
         internal void RaiseMatchStarted()
         {
-            MatchStarted(this, new MatchStarted());
+			if(MatchStarted != null)
+            	MatchStarted(this, new MatchStarted());
         }
+
+		internal void RaisePlayerKilled(PlayerKilled kill)
+		{
+			if (PlayerKilled != null)
+				PlayerKilled (this, kill);
+		}
         #endregion
     }
 }
