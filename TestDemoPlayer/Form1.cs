@@ -58,6 +58,21 @@ namespace TestDemoPlayer
 
             parser.TickDone += parser_TickDone;
             parser.MatchStarted += parser_MatchStarted;
+			parser.PlayerKilled += HandlePlayerKilled;
+        }
+
+        void HandlePlayerKilled (object sender, PlayerKilled e)
+        {
+			this.Text =  (
+				String.Format(
+					"{0} ({1}hp) got killed by {2} ({3}hp) with an {4}", 
+					e.DeathPerson.Name, 
+					e.DeathPerson.HP, 
+					e.Killer.Name, 
+					e.Killer.HP, 
+					e.Weapon.Weapon.ToString()
+				)
+			);
         }
 
         void parser_MatchStarted(object sender, MatchStarted e)
@@ -115,7 +130,7 @@ namespace TestDemoPlayer
 		SolidBrush brush2 = new SolidBrush(col2);
         void parser_TickDone(object sender, TickDone e)
         {
-			if (i % 200 != 0)
+			if (i % 2 != 0)
 			{
 				return;
 			}
