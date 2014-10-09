@@ -128,7 +128,6 @@ namespace DemoInfo
                     break;
                 case DemoCommand.Stop:
                     return false;
-                    break;
                 case DemoCommand.ConsoleCommand:
                     reader.ReadVolvoPacket();
                     break;
@@ -136,7 +135,7 @@ namespace DemoInfo
                     DataTables.ParsePacket(reader.ReadVolvoPacket());
                     break;
                 case DemoCommand.StringTables:
-                    StringTables.ParsePacket(reader.ReadVolvoPacket());
+					StringTables.ParsePacket(reader.ReadVolvoPacket(), this);
                     break;
                 case DemoCommand.UserCommand:
                     reader.ReadInt32();

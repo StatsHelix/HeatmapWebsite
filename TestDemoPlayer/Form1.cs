@@ -34,7 +34,7 @@ namespace TestDemoPlayer
             OpenFileDialog diag = new OpenFileDialog();
             diag.DefaultExt = "*.dem";
             diag.Filter = "CS:GO Demo (*.dem)|*.dem"; 
-			diag.FileName = "/home/moritz/.steam/steam/SteamApps/common/Counter-Strike Global Offensive/csgo/replays/";
+			diag.FileName = "~/.steam/steam/SteamApps/common/Counter-Strike Global Offensive/csgo/replays/";
             diag.ShowDialog();
             
 
