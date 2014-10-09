@@ -10,7 +10,7 @@ namespace DemoInfo.ST
 {
     class StringTableParser
     {
-        public void ParsePacket(byte[] data)
+		public void ParsePacket(byte[] data, DemoParser parser)
         {
             BitArrayStream reader = new BitArrayStream(data);
 
@@ -20,11 +20,11 @@ namespace DemoInfo.ST
             {
                 string tableName = reader.ReadString();
 
-                ParseStringTable(reader, tableName == "userinfo");
+				ParseStringTable(reader, tableName == "userinfo", parser);
             }
         }
 
-        public void ParseStringTable(BitArrayStream reader, bool isUserInfo)
+		public void ParseStringTable(BitArrayStream reader, bool isUserInfo, DemoParser parser)
         {
             int numStrings = (int)reader.ReadInt(16);
 
@@ -46,7 +46,9 @@ namespace DemoInfo.ST
                     {
                         PlayerInfo info = PlayerInfo.ParseFrom(new BinaryReader(new MemoryStream(data)));
                         
-
+						int dummy;
+						if(int.TryParse(stringName, out dummy))
+							parser.RawPlayers[dummy] = info;
                     }
                 }
             }
