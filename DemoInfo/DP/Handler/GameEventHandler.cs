@@ -45,13 +45,21 @@ namespace DemoInfo.DP.Handler
 			}
 
 			if (eventDescriptor.name == "player_death") {
-				Dictionary<string, object> data = new Dictionary<string, object> ();
+				var data = MapData (eventDescriptor, rawEvent);
 
-				var i = 0;
-				foreach (var key in eventDescriptor.keys) {
+				PlayerKilled kill = new PlayerKilled ();
 
+				if (parser.Players.ContainsKey ((int)data ["userid"] - 1) && parser.Players.ContainsKey ((int)data ["attacker"] - 1)) {
+					kill.DeathPerson = parser.Players [(int)data ["userid"] - 1];
+					kill.Killer = parser.Players [(int)data ["attacker"] - 1];
+					kill.Headshot = (bool)data ["headshot"];
+					kill.Weapon = new Equipment ((string)data ["weapon"],(string) data ["weapon_itemid"]);
+					kill.PenetratedObjects = (int)data ["penetrated"];
 
+					parser.RaisePlayerKilled (kill);
 				}
+
+
 
 			}
 
@@ -59,6 +67,18 @@ namespace DemoInfo.DP.Handler
                 return;
 
         }
+
+		private Dictionary<string, object> MapData(CSVCMsg_GameEventList.descriptor_t eventDescriptor, CSVCMsg_GameEvent rawEvent)
+		{
+			Dictionary<string, object> data = new Dictionary<string, object> ();
+
+			var i = 0;
+			foreach (var key in eventDescriptor.keys) {
+				data [key.name] = GetData (rawEvent.keys [i++]);
+			}
+
+			return data;
+		}
 
 		private object GetData(CSVCMsg_GameEvent.key_t eventData)
 		{
