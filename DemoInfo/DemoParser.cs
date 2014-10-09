@@ -37,7 +37,6 @@ namespace DemoInfo
 
         internal DataTableParser DataTables = new DataTableParser();
         StringTableParser StringTables = new StringTableParser();
-        DemoPacketParser PacketParser;
 
 		public Dictionary<int, Player> Players = new Dictionary<int, Player>();
 
@@ -50,7 +49,6 @@ namespace DemoInfo
         public DemoParser(Stream input)
         {
             reader = new BinaryReader(input);
-            PacketParser = new DemoPacketParser(this);
         }
 
         public void ParseDemo(bool fullParse)
@@ -124,7 +122,6 @@ namespace DemoInfo
             int TickNum = reader.ReadInt32();
             int playerSlot = reader.ReadByte();
 
-            int a;
             switch (command)
             {
                 case DemoCommand.Synctick:
@@ -164,7 +161,7 @@ namespace DemoInfo
 
             var packet = reader.ReadVolvoPacket();
 
-            PacketParser.ParsePacket(packet);
+			DemoPacketParser.ParsePacket(packet, this);
         }
 
         #region EventCaller
