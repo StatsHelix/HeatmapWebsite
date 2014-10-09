@@ -12,13 +12,21 @@ namespace DemoInfo
         public int SteamID { get; set; }
         public Vector Position { get; set; }
         public int EntityID { get; set; }
+		public int HP { get; set; }
+
+		public Vector LastAlivePosition { get; set; }
+
+		public bool IsAlive 
+		{
+			get { return HP > 0; }
+		}
 
         public Team Team { get; set; }
 
     }
     public enum Team {
-        Terrorist = 1,
-        CounterTerrorist = 2,
-        Spectator = 3
+		Spectate = 1,
+		Terrorist = 2,
+		CounterTerrorist = 3,
     }
 }

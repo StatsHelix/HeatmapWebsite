@@ -40,10 +40,47 @@ namespace DemoInfo.DP.Handler
             if (eventDescriptor.name == "round_announce_match_start")
                 parser.RaiseMatchStarted();
 
+			foreach (var d in rawEvent.keys) {
+				GetData (d);
+			}
+
+			if (eventDescriptor.name == "player_death") {
+				Dictionary<string, object> data = new Dictionary<string, object> ();
+
+				var i = 0;
+				foreach (var key in eventDescriptor.keys) {
+
+
+				}
+
+			}
+
             if (eventDescriptor.name == "hltv_status")
                 return;
 
         }
+
+		private object GetData(CSVCMsg_GameEvent.key_t eventData)
+		{
+			switch (eventData.type) {
+			case 1:
+				return eventData.val_string;
+			case 2:
+				return eventData.val_float;
+			case 3:
+				return eventData.val_long;
+			case 4:
+				return eventData.val_short;
+			case 5:
+				return eventData.val_byte; 
+			case 6:
+				return eventData.val_bool;
+			default:
+				break;
+			}
+
+			return null;
+		}
 
         public int GetPriority()
         {

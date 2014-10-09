@@ -15,14 +15,12 @@ namespace TestDemoPlayer
 {
     public partial class ReplayViewer : Form
     {
-        DemoParser parser = null;
+		DemoParser parser = null;
 
         float mapX, mapY, scale;
 
         Bitmap drawingBitmap;
         Graphics g;
-
-        string filename = null;
 
         public ReplayViewer()
         {
@@ -36,14 +34,15 @@ namespace TestDemoPlayer
             OpenFileDialog diag = new OpenFileDialog();
             diag.DefaultExt = "*.dem";
             diag.Filter = "CS:GO Demo (*.dem)|*.dem"; 
-            //diag.FileName = "C:\\VPiBP.dem";
+			diag.FileName = "/home/moritz/.steam/steam/SteamApps/common/Counter-Strike Global Offensive/csgo/replays/";
             diag.ShowDialog();
             
 
             if (!File.Exists(diag.FileName))
             {
                 MessageBox.Show("No valid file specified. ");
-                throw new InvalidDataException();
+				this.Close ();
+				Environment.Exit (0);
             }
 
             var reader = File.OpenRead(diag.FileName);
@@ -71,7 +70,7 @@ namespace TestDemoPlayer
         private void LoadBackgroundInfo()
         {
             //Okay, set the background-image. 
-            var lines = File.ReadAllLines("overviews\\" + parser.Map + ".txt");
+			var lines = File.ReadAllLines(Path.Combine("overviews", parser.Map + ".txt"));
 
             var file = lines
                 .First(a => a.Contains("\"material\""))
@@ -102,39 +101,53 @@ namespace TestDemoPlayer
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (!parser.ParseNextTick())
-                drawingBitmap.Save(Path.GetRandomFileName() + ".png", System.Drawing.Imaging.ImageFormat.Png);
+			if (!parser.ParseNextTick ()) {
+				timer1.Enabled = false;
+				this.Close ();
+			}
         }
     
         int i = 0;
 
-        static Color col = Color.FromArgb(5, Color.OrangeRed);
-        SolidBrush brush = new SolidBrush(col);
+		static Color col1 = Color.FromArgb(255, Color.OrangeRed);
+		static Color col2 = Color.FromArgb(255, Color.CornflowerBlue);
+		SolidBrush brush1 = new SolidBrush(col1);
+		SolidBrush brush2 = new SolidBrush(col2);
         void parser_TickDone(object sender, TickDone e)
         {
-            //g.Clear(Color.Transparent);
+			if (i % 200 != 0)
+			{
+				return;
+			}
+
+            g.Clear(Color.Transparent);
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-            foreach(var player in parser.Players)
+			foreach(var player in parser.Players.Values)
             {
-                var p = MapPoint(player.Position);
+				var p = MapPoint(player.LastAlivePosition);
                 var p2 = p;
-                p.X -= 1;
-                p.Y -= 1;
+				p.X -= 7;
+				p.Y -= 7;
 
                 p2.X += 20;
 
-                g.FillEllipse(brush, new Rectangle(p, new Size(3, 3)));
-                //g.DrawString(player.Name, new Font("Calibri", 20), new SolidBrush(Color.Green), p2);
+				Brush brush = null;
+
+				if (player.IsAlive) {
+					brush = player.Team == Team.Terrorist ? brush1 : brush2;
+				} else {
+					brush = new SolidBrush (Color.Red);
+				}
+
+				g.FillEllipse(brush , new Rectangle(p, new Size(15, 15)));
+				g.DrawString(player.Name + " | " + player.HP.ToString(), new Font(FontFamily.GenericSansSerif, 14), brush, p2);
 
             }
 
 
-            if (i % 500 == 0)
-            {
                 pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
                 pictureBox1.Image = drawingBitmap;
-            }
 
         }
 

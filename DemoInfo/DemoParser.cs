@@ -39,7 +39,7 @@ namespace DemoInfo
         StringTableParser StringTables = new StringTableParser();
         DemoPacketParser PacketParser;
 
-        public List<Player> Players = new List<Player>();
+		public Dictionary<int, Player> Players = new Dictionary<int, Player>();
 
         internal Dictionary<int, Entity> entites = new Dictionary<int, Entity>();
 
@@ -73,19 +73,26 @@ namespace DemoInfo
         {
 
             bool b = ParseTick();
-            Players.Clear();
             foreach (var entity in entites.Values.Where(a => a.ServerClass.Name == "CCSPlayer"))
             {
-                if(entity.Properties.ContainsKey("m_vecOrigin"))
+				if(entity.Properties.ContainsKey("m_vecOrigin") && entity.Properties.ContainsKey("m_iHealth"))
                 {
-                    Player p = new Player();
+					if (!Players.ContainsKey (entity.ID))
+						Players [entity.ID] = new Player ();
+
+					Player p = Players [entity.ID];
+
+
                     p.EntityID = entity.ID;
                     p.Position = (Vector)entity.Properties["m_vecOrigin"];
-                    
-                    //p.Name = RawPlayers[entity.ID - 1].Name;
-                    //p.SteamID = RawPlayers[entity.ID - 1].FriendsID;
-                    //p.Team = (Team)entity.Properties["m_iTeamNum"];
-                    Players.Add(p);
+					p.HP = (int)entity.Properties ["m_iHealth"];
+                    p.Name = RawPlayers[entity.ID - 1].Name;
+                    p.SteamID = RawPlayers[entity.ID - 1].FriendsID;
+                    p.Team = (Team)entity.Properties["m_iTeamNum"];
+
+					if (p.IsAlive) {
+						p.LastAlivePosition = p.Position;
+					}
                 }
             }
 

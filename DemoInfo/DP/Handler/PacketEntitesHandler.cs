@@ -74,6 +74,11 @@ namespace DemoInfo.DP.Handler
             //Console.ResetColor();
 
             parser.entites[newEntity.ID] = newEntity;
+
+			if (entityClass.Name.Contains ("flash")) 
+			{
+			}
+
             return newEntity;
         }
 
