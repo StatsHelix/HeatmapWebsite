@@ -212,6 +212,9 @@ namespace DemoInfo
 				case "usp_silencer":
 					weapon = EquipmentElement.USP;
 					break;
+				case "world":
+					weapon = EquipmentElement.World;
+					break;
 				default:
 					throw new InvalidOperationException ("Did not find weapon");
 				}
@@ -272,6 +275,7 @@ namespace DemoInfo
 		Helmet = 403,
 		Bomb = 404,
 		Knife = 505,
+		World = 506,
 
 		//Grenades
 		Decoy = 501,
