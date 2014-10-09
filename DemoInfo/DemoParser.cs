@@ -90,6 +90,9 @@ namespace DemoInfo
                     p.SteamID = RawPlayers[entity.ID - 1].FriendsID;
                     p.Team = (Team)entity.Properties["m_iTeamNum"];
 
+					p.ViewDirectionX = (float)entity.Properties ["m_angEyeAngles[1]"] + 90;
+					p.ViewDirectionY = (float)entity.Properties ["m_angEyeAngles[0]"];
+
 					if (p.IsAlive) {
 						p.LastAlivePosition = p.Position;
 					}

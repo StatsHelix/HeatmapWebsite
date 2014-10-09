@@ -141,11 +141,13 @@ namespace TestDemoPlayer
 			foreach(var player in parser.Players.Values)
             {
 				var p = MapPoint(player.LastAlivePosition);
-                var p2 = p;
-				p.X -= 7;
-				p.Y -= 7;
+				var endPoint = p;
+				var p2 = p;
+				var p3 = p;
+				p2.X -= 7;
+				p2.Y -= 7;
 
-                p2.X += 20;
+				p3.X += 20;
 
 				Brush brush = null;
 
@@ -155,8 +157,12 @@ namespace TestDemoPlayer
 					brush = new SolidBrush (Color.Red);
 				}
 
-				g.FillEllipse(brush , new Rectangle(p, new Size(15, 15)));
-				g.DrawString(player.Name + " | " + player.HP.ToString(), new Font(FontFamily.GenericSansSerif, 14), brush, p2);
+				endPoint.X += (int)(Math.Sin ((player.ViewDirectionX / 360) * 2 * Math.PI) * 30);
+				endPoint.Y += (int)(Math.Cos ((player.ViewDirectionX / 360) * 2 * Math.PI) * 30);
+
+				g.FillEllipse(brush , new Rectangle(p2, new Size(15, 15)));
+				g.DrawString(player.Name + " | " + player.HP.ToString(), new Font(FontFamily.GenericSansSerif, 14), brush, p3);
+				g.DrawLine (new Pen (brush, 3), p, endPoint);
 
             }
 

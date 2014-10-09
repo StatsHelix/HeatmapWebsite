@@ -16,6 +16,9 @@ namespace DemoInfo
 
 		public Vector LastAlivePosition { get; set; }
 
+		public float ViewDirectionX { get; set; }
+		public float ViewDirectionY { get; set; }
+
 		public bool IsAlive 
 		{
 			get { return HP > 0; }
