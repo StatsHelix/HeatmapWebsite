@@ -11,8 +11,12 @@ namespace DemoInfo.DP
 {
 	public static class DemoPacketParser
     {
-		private static IEnumerable<IMessageParser> Parsers = Assembly.GetExecutingAssembly().GetTypes().Where(a => a.GetInterfaces().Contains(typeof(IMessageParser)))
-			.Select(parser => (IMessageParser)parser.GetConstructor(new Type[0]).Invoke(new object[0])).OrderByDescending(a => a.GetPriority()).ToArray();
+		private static IEnumerable<IMessageParser> Parsers = (
+			from type in Assembly.GetExecutingAssembly().GetTypes()
+			where type.GetInterfaces().Contains(typeof(IMessageParser))
+			let parser = (IMessageParser)type.GetConstructor(new Type[0]).Invoke(new object[0])
+			orderby -parser.GetPriority()
+			select parser).ToArray();
 
 		public static void ParsePacket(byte[] data, DemoParser demo)
         {
