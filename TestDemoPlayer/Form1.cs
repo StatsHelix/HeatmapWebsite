@@ -65,12 +65,13 @@ namespace TestDemoPlayer
         {
 			this.Text =  (
 				String.Format(
-					"{0} ({1}hp) got killed by {2} ({3}hp) with an {4}", 
+					"{0} ({1}hp) got killed by {2} ({3}hp) with an {4} ({5})", 
 					e.DeathPerson.Name, 
 					e.DeathPerson.HP, 
 					e.Killer.Name, 
 					e.Killer.HP, 
-					e.Weapon.Weapon.ToString()
+					e.Weapon.Weapon.ToString(),
+					e.Headshot ? "headshot" : "bodyshot"
 				)
 			);
         }
