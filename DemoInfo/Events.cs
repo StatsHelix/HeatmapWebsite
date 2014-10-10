@@ -45,7 +45,7 @@ namespace DemoInfo
 		public EquipmentClass Class {
 			get
 			{
-				return (EquipmentClass)((int)Weapon + 1);
+				return (EquipmentClass)(((int)Weapon / 100) + 1);
 			}
 		}
 
@@ -135,10 +135,6 @@ namespace DemoInfo
 					break;
 				case "incgrenade":
 					weapon = EquipmentElement.Incendiary;
-					break;
-				case "knife":
-				case "knifegg": //gungame-knife
-					weapon = EquipmentElement.Knife;
 					break;
 				case "m249":
 					weapon = EquipmentElement.M249;
