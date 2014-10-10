@@ -131,7 +131,7 @@ namespace TestDemoPlayer
 		SolidBrush brush2 = new SolidBrush(col2);
         void parser_TickDone(object sender, TickDone e)
         {
-			if (i % 2 != 0)
+			if (i++ % 16 != 0)
 			{
 				return;
 			}

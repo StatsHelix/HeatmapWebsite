@@ -51,10 +51,14 @@ namespace DemoInfo.DP.Handler
                 {
                     //leave
                     if (reader.ReadBit())
-                    {
+					{
+						parser.entites.Remove(currentEntity);
+						if (parser.Players.ContainsKey (currentEntity))
+							parser.Players.Remove (currentEntity);
                     }
 
-                    parser.entites.Remove(currentEntity);
+                    
+
                 }
 
             }
@@ -74,10 +78,6 @@ namespace DemoInfo.DP.Handler
             //Console.ResetColor();
 
             parser.entites[newEntity.ID] = newEntity;
-
-			if (entityClass.Name.Contains ("flash")) 
-			{
-			}
 
             return newEntity;
         }
