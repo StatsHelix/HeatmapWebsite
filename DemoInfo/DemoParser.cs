@@ -17,13 +17,15 @@ namespace DemoInfo
         /// <summary>
         /// Called once when the Header of the demo is parsed
         /// </summary>
-        public event EventHandler<HeaderParsed> HeaderParsed;
+        public event EventHandler<HeaderParsedEventArgs> HeaderParsed;
 
-        public event EventHandler<MatchStarted> MatchStarted;
+        public event EventHandler<MatchStartedEventArgs> MatchStarted;
 
-        public event EventHandler<TickDone> TickDone;
+        public event EventHandler<TickDoneEventArgs> TickDone;
 
-		public event EventHandler<PlayerKilled> PlayerKilled;
+		public event EventHandler<PlayerKilledEventArgs> PlayerKilled;
+
+		public event EventHandler<WeaponFiredEventArgs> WeaponFired;
         #endregion
 
         #region Information
@@ -58,7 +60,7 @@ namespace DemoInfo
             ParseHeader();
 
             if (HeaderParsed != null)
-                HeaderParsed(this, new HeaderParsed(Header));
+                HeaderParsed(this, new HeaderParsedEventArgs(Header));
 
             if(fullParse)
             {
@@ -69,10 +71,20 @@ namespace DemoInfo
                 
         }
 
+		List<string> types = new List<string>();
+
         public bool ParseNextTick()
         {
 
-            bool b = ParseTick();
+			bool b = ParseTick();
+
+			foreach (var type in entites.Values.Where(a => !types.Contains(a.ServerClass.Name))) {
+				types.Add (type.ServerClass.Name);
+
+				Console.WriteLine ("##" + type.ServerClass.Name);
+			}
+
+
             foreach (var entity in entites.Values.Where(a => a.ServerClass.Name == "CCSPlayer"))
             {
 				if(entity.Properties.ContainsKey("m_vecOrigin") && entity.Properties.ContainsKey("m_iHealth") && RawPlayers.ContainsKey(entity.ID - 1))
@@ -102,12 +114,17 @@ namespace DemoInfo
 						p.LastAlivePosition = p.Position;
 					}
                 }
-            }
+			}
+
+			foreach (var entity in entites.Values.Where(a => a.ServerClass.Name == "CCSPlayerResource"))
+			{
+
+			}
 
             if (b)
             {
                 if (TickDone != null)
-                    TickDone(this, new TickDone());
+                    TickDone(this, new TickDoneEventArgs());
             }
 
             return b;
@@ -178,13 +195,19 @@ namespace DemoInfo
         internal void RaiseMatchStarted()
         {
 			if(MatchStarted != null)
-            	MatchStarted(this, new MatchStarted());
+            	MatchStarted(this, new MatchStartedEventArgs());
         }
 
-		internal void RaisePlayerKilled(PlayerKilled kill)
+		internal void RaisePlayerKilled(PlayerKilledEventArgs kill)
 		{
 			if (PlayerKilled != null)
 				PlayerKilled (this, kill);
+		}
+
+		internal void RaiseWeaponFired(WeaponFiredEventArgs fire)
+		{
+			if (WeaponFired != null)
+				WeaponFired (this, fire);
 		}
         #endregion
     }
