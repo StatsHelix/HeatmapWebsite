@@ -272,8 +272,11 @@ namespace DemoInfo
 				case "world":
 					weapon = EquipmentElement.World;
 					break;
-				default:
-					throw new InvalidOperationException ("Did not find weapon");
+				case "inferno":
+					weapon = EquipmentElement.Incendiary;
+					break;
+				default: 
+					throw new InvalidOperationException("Unknown weapon" + weapon);
 				}
 			}
 
