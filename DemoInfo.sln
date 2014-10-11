@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoInfo", "DemoInfo\DemoIn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestDemoPlayer", "TestDemoPlayer\TestDemoPlayer.csproj", "{D726A3C4-C9C0-46EB-A6DE-84482E316945}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPI", "WebAPI\WebAPI.csproj", "{98003B8F-F655-4D64-8DCE-027DA7607738}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,6 +19,10 @@ Global
 		{22D4CFC7-6810-4C18-A353-71A49782394F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22D4CFC7-6810-4C18-A353-71A49782394F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22D4CFC7-6810-4C18-A353-71A49782394F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98003B8F-F655-4D64-8DCE-027DA7607738}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98003B8F-F655-4D64-8DCE-027DA7607738}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98003B8F-F655-4D64-8DCE-027DA7607738}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98003B8F-F655-4D64-8DCE-027DA7607738}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D726A3C4-C9C0-46EB-A6DE-84482E316945}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D726A3C4-C9C0-46EB-A6DE-84482E316945}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D726A3C4-C9C0-46EB-A6DE-84482E316945}.Release|Any CPU.ActiveCfg = Release|Any CPU
