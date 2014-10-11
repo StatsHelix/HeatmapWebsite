@@ -74,6 +74,7 @@ namespace DemoInfo.DP.Handler
 					parser.RaisePlayerKilled (kill);
 				}
 			}
+
 			#region Nades
 			if(eventDescriptor.name == "player_blind")
 			{
@@ -82,62 +83,34 @@ namespace DemoInfo.DP.Handler
 					blindPlayers.Add(parser.Players[(int)data["userid"] - 1]);
 			}
 			if (eventDescriptor.name == "flashbang_detonate") {
-				var data = MapData (eventDescriptor, rawEvent);
-				FlashEventArgs args = new FlashEventArgs (blindPlayers.ToArray());
-				FillNadeEvent (args, data, parser);
+				var args = FillNadeEvent<FlashEventArgs>(MapData(eventDescriptor, rawEvent), parser);
+				args.FlashedPlayers = blindPlayers.ToArray();
 				parser.RaiseFlashExploded (args);
 				blindPlayers.Clear();
 			}
 
-			if (eventDescriptor.name == "hegrenade_detonate") {
-				var data = MapData (eventDescriptor, rawEvent);
-				GrenadeEventArgs args = new GrenadeEventArgs ();
-				FillNadeEvent (args, data, parser);
-				parser.RaiseGrenadeExploded (args);
-			}
-
-			if (eventDescriptor.name == "decoy_started") {
-				var data = MapData (eventDescriptor, rawEvent);
-				DecoyEventArgs args = new DecoyEventArgs ();
-				FillNadeEvent (args, data, parser);
-				parser.RaiseDecoyStart (args);
-			}
-			if (eventDescriptor.name == "decoy_detonate") {
-				var data = MapData (eventDescriptor, rawEvent);
-				DecoyEventArgs args = new DecoyEventArgs ();
-				FillNadeEvent (args, data, parser);
-				parser.RaiseDecoyEnd (args);
-			}
-			if (eventDescriptor.name == "smokegrenade_detonate") {
-				var data = MapData (eventDescriptor, rawEvent);
-				SmokeEventArgs args = new SmokeEventArgs ();
-				FillNadeEvent (args, data, parser);
-				parser.RaiseSmokeStart (args);
-			}
-			if (eventDescriptor.name == "smokegrenade_expired") {
-				var data = MapData (eventDescriptor, rawEvent);
-				SmokeEventArgs args = new SmokeEventArgs ();
-				FillNadeEvent (args, data, parser);
-				parser.RaiseSmokeEnd (args);
-			}
-			if (eventDescriptor.name == "inferno_startburn") {
-				var data = MapData (eventDescriptor, rawEvent);
-				FireEventArgs args = new FireEventArgs ();
-				FillNadeEvent (args, data, parser);
-				parser.RaiseFireStart (args);
-			}
-			if (eventDescriptor.name == "inferno_expire") {
-				var data = MapData (eventDescriptor, rawEvent);
-				FireEventArgs args = new FireEventArgs ();
-				FillNadeEvent (args, data, parser);
-				parser.RaiseFireEnd (args);
-			}
+			if (eventDescriptor.name == "hegrenade_detonate")
+				parser.RaiseGrenadeExploded(FillNadeEvent<GrenadeEventArgs>(MapData(eventDescriptor, rawEvent), parser));
+			if (eventDescriptor.name == "decoy_started")
+				parser.RaiseDecoyStart(FillNadeEvent<DecoyEventArgs>(MapData(eventDescriptor, rawEvent), parser));
+			if (eventDescriptor.name == "decoy_detonate")
+				parser.RaiseDecoyEnd(FillNadeEvent<DecoyEventArgs>(MapData(eventDescriptor, rawEvent), parser));
+			if (eventDescriptor.name == "smokegrenade_detonate")
+				parser.RaiseSmokeStart(FillNadeEvent<SmokeEventArgs>(MapData(eventDescriptor, rawEvent), parser));
+			if (eventDescriptor.name == "smokegrenade_expired")
+				parser.RaiseSmokeEnd(FillNadeEvent<SmokeEventArgs>(MapData(eventDescriptor, rawEvent), parser));
+			if (eventDescriptor.name == "inferno_startburn")
+				parser.RaiseFireStart(FillNadeEvent<FireEventArgs>(MapData(eventDescriptor, rawEvent), parser));
+			if (eventDescriptor.name == "inferno_expire")
+				parser.RaiseFireEnd(FillNadeEvent<FireEventArgs>(MapData(eventDescriptor, rawEvent), parser));
 
 			#endregion
         }
 
-		private void FillNadeEvent(NadeEventArgs nade, Dictionary<string, object> data, DemoParser parser)
+		private T FillNadeEvent<T>(Dictionary<string, object> data, DemoParser parser) where T : NadeEventArgs, new()
 		{
+			var nade = new T();
+
 			if (data.ContainsKey ("userid") && parser.Players.ContainsKey ((int)data ["userid"] - 1))
 				nade.ThrownBy = parser.Players [(int)data ["userid"] - 1];
 				
@@ -146,6 +119,8 @@ namespace DemoInfo.DP.Handler
 			vec.Y = (float)data ["y"];
 			vec.Z = (float)data ["z"];
 			nade.Position = vec;
+
+			return nade;
 		}
 
 		private Dictionary<string, object> MapData(CSVCMsg_GameEventList.descriptor_t eventDescriptor, CSVCMsg_GameEvent rawEvent)
