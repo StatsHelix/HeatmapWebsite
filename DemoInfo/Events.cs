@@ -64,7 +64,7 @@ namespace DemoInfo
 
 	public class FireEventArgs : NadeEventArgs
 	{
-		internal FireEventArgs () : base(EquipmentElement.Incendiary)
+		public FireEventArgs () : base(EquipmentElement.Incendiary)
 		{
 			
 		}
@@ -87,9 +87,9 @@ namespace DemoInfo
 	{
 		public Player[] FlashedPlayers { get; internal set; }
 
-		internal FlashEventArgs (Player[] flashed) : base(EquipmentElement.Flash)
+		public FlashEventArgs () : base(EquipmentElement.Flash)
 		{
-			FlashedPlayers = flashed;
+
 		}
 	}
 	public class GrenadeEventArgs : NadeEventArgs
