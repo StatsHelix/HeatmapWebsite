@@ -52,7 +52,7 @@ namespace DemoInfo
 		public EquipmentClass Class {
 			get
 			{
-				return (EquipmentClass)(((int)Weapon / 100) + 1);
+				return (EquipmentClass)(((int)Weapon / 100) + 1); 
 			}
 		}
 

@@ -58,7 +58,7 @@ namespace DemoInfo.DP.Handler
 			}
 
 
-			if (eventDescriptor.name == "player_death") {
+			if (eventDescriptor.name == "player_death") { 
 				var data = MapData (eventDescriptor, rawEvent);
 
 				PlayerKilledEventArgs kill = new PlayerKilledEventArgs ();
