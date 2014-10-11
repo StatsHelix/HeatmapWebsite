@@ -170,14 +170,18 @@ namespace FuckThisFuckingCGIFuck
 			return true;
 		}
 
-		long MoveToNextBoundary ()
+		long MoveToNextBoundary (int maxlength)
 		{
 			long retval = 0;
 			bool got_cr = false;
 
+			long start = data.Position;
 			int state = 0;
 			int c = data.ReadByte ();
 			while (true) {
+				if (data.Position - start > maxlength)
+					throw new InvalidDataException("data too long");
+
 				if (c == -1)
 					return -1;
 
@@ -242,7 +246,7 @@ namespace FuckThisFuckingCGIFuck
 			return retval;
 		}
 
-		public Element ReadNextElement ()
+		public Element ReadNextElement (int maxlength)
 		{
 			if (at_eof || ReadBoundary ())
 				return null;
@@ -270,7 +274,7 @@ namespace FuckThisFuckingCGIFuck
 			if (stopDoNotMovePutYourHandsInTheAir)
 				return null;
 
-			long pos = MoveToNextBoundary ();
+			long pos = MoveToNextBoundary (maxlength);
 			if (pos == -1)
 				return null;
 

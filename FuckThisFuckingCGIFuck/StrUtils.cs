@@ -52,7 +52,7 @@ namespace FuckThisFuckingCGIFuck {
 			if (l2 > l1)
 				return false;
 
-			return (0 == String.Compare (str1, 0, str2, 0, l2, ignore_case, Helpers.InvariantCulture));
+			return (0 == String.Compare (str1, 0, str2, 0, l2, ignore_case, CultureInfo.InvariantCulture));
 		}
 
 		public static bool EndsWith (string str1, string str2)
@@ -70,7 +70,7 @@ namespace FuckThisFuckingCGIFuck {
 			if (l2 > l1)
 				return false;
 
-			return (0 == String.Compare (str1, l1 - l2, str2, 0, l2, ignore_case, Helpers.InvariantCulture));
+			return (0 == String.Compare (str1, l1 - l2, str2, 0, l2, ignore_case, CultureInfo.InvariantCulture));
 		}
 
 		public static string EscapeQuotesAndBackslashes (string attributeValue)

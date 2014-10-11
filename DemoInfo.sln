@@ -42,7 +42,7 @@ Global
 		{D726A3C4-C9C0-46EB-A6DE-84482E316945}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = HeatmapGenerator\HeatmapGenerator.csproj
+		StartupItem = FuckThisFuckingCGIFuck\FuckThisFuckingCGIFuck.csproj
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
