@@ -96,6 +96,9 @@ namespace HeatmapGenerator
 
 		void HandleExplosiveNadeExploded (object sender, GrenadeEventArgs e)
 		{
+			if (e.ThrownBy == null)
+				return;
+
 			if (e.ThrownBy.Team == Team.CounterTerrorist)
 				CTNades.AddPoint(MapPoint(e.Position));
 			else
@@ -104,6 +107,9 @@ namespace HeatmapGenerator
 
 		void HandleSmokeNadeStarted (object sender, SmokeEventArgs e)
 		{
+			if (e.ThrownBy == null)
+				return;
+
 			if (e.ThrownBy.Team == Team.CounterTerrorist)
 				CTSmokes.AddPoint(MapPoint(e.Position));
 			else
@@ -112,6 +118,10 @@ namespace HeatmapGenerator
 
 		void HandleFlashNadeExploded (object sender, FlashEventArgs e)
 		{
+
+			if (e.ThrownBy == null)
+				return;
+
 			if (e.ThrownBy.Team == Team.CounterTerrorist)
 				CTFlashes.AddPoint(MapPoint(e.Position));
 			else
