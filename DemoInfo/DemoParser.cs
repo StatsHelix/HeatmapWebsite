@@ -26,6 +26,20 @@ namespace DemoInfo
 		public event EventHandler<PlayerKilledEventArgs> PlayerKilled;
 
 		public event EventHandler<WeaponFiredEventArgs> WeaponFired;
+
+		public event EventHandler<SmokeEventArgs> SmokeNadeStarted;
+		public event EventHandler<SmokeEventArgs> SmokeNadeEnded;
+
+		public event EventHandler<DecoyEventArgs> DecoyNadeStarted;
+		public event EventHandler<DecoyEventArgs> DecoyNadeEnded;
+
+		public event EventHandler<FireEventArgs> FireNadeStarted;
+		public event EventHandler<FireEventArgs> FireNadeEnded;
+
+		public event EventHandler<FlashEventArgs> FlashNadeExploded;
+		public event EventHandler<GrenadeEventArgs> ExplosiveNadeExploded;
+
+		public event EventHandler<NadeEventArgs> NadeReachedTarget;
         #endregion
 
         #region Information
@@ -209,6 +223,79 @@ namespace DemoInfo
 			if (WeaponFired != null)
 				WeaponFired (this, fire);
 		}
+
+		internal void RaiseSmokeStart(SmokeEventArgs args)
+		{
+			if (SmokeNadeStarted != null)
+				SmokeNadeStarted (this, args);
+
+			if (NadeReachedTarget != null)
+				NadeReachedTarget (this, args);
+		}
+
+		internal void RaiseSmokeEnd(SmokeEventArgs args)
+		{
+			if (SmokeNadeEnded != null)
+				SmokeNadeEnded (this, args);
+
+			if (NadeReachedTarget != null)
+				NadeReachedTarget (this, args);
+		}
+
+		internal void RaiseDecoyStart(DecoyEventArgs args)
+		{
+			if (DecoyNadeStarted != null)
+				DecoyNadeStarted (this, args);
+
+			if (NadeReachedTarget != null)
+				NadeReachedTarget (this, args);
+		}
+
+		internal void RaiseDecoyEnd(DecoyEventArgs args)
+		{
+			if (DecoyNadeEnded != null)
+				DecoyNadeEnded (this, args);
+
+			if (NadeReachedTarget != null)
+				NadeReachedTarget (this, args);
+		}
+
+		internal void RaiseFireStart(FireEventArgs args)
+		{
+			if (FireNadeStarted != null)
+				FireNadeStarted (this, args);
+
+			if (NadeReachedTarget != null)
+				NadeReachedTarget (this, args);
+		}
+
+		internal void RaiseFireEnd(FireEventArgs args)
+		{
+			if (FireNadeEnded != null)
+				FireNadeEnded (this, args);
+
+			if (NadeReachedTarget != null)
+				NadeReachedTarget (this, args);
+		}
+
+		internal void RaiseFlashExploded(FlashEventArgs args)
+		{
+			if (FlashNadeExploded != null)
+				FlashNadeExploded (this, args);
+
+			if (NadeReachedTarget != null)
+				NadeReachedTarget (this, args);
+		}
+
+		internal void RaiseGrenadeExploded(GrenadeEventArgs args)
+		{
+			if (ExplosiveNadeExploded != null)
+				ExplosiveNadeExploded (this, args);
+
+			if (NadeReachedTarget != null)
+				NadeReachedTarget (this, args);
+		}
+
         #endregion
     }
 }

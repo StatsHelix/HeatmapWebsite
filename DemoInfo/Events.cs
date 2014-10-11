@@ -45,6 +45,60 @@ namespace DemoInfo
 		public Player Shooter { get; internal set; }
 	}
 
+	public class NadeEventArgs : EventArgs
+	{
+		public Vector Position { get; internal set; }
+		public EquipmentElement NadeType { get; internal set; }
+		public Player ThrownBy { get; internal set; }
+
+		internal NadeEventArgs ()
+		{
+		
+		}
+
+		internal NadeEventArgs (EquipmentElement type)
+		{
+			this.NadeType = type;
+		}
+	}
+
+	public class FireEventArgs : NadeEventArgs
+	{
+		internal FireEventArgs () : base(EquipmentElement.Incendiary)
+		{
+			
+		}
+  	}
+	public class SmokeEventArgs : NadeEventArgs
+	{
+		public SmokeEventArgs () : base(EquipmentElement.Smoke)
+		{
+			
+		}
+	}
+	public class DecoyEventArgs : NadeEventArgs
+	{
+		public DecoyEventArgs () : base(EquipmentElement.Decoy)
+		{
+			
+		}
+	}
+	public class FlashEventArgs : NadeEventArgs
+	{
+		public Player[] FlashedPlayers { get; internal set; }
+
+		internal FlashEventArgs (Player[] flashed) : base(EquipmentElement.Flash)
+		{
+			FlashedPlayers = flashed;
+		}
+	}
+	public class GrenadeEventArgs : NadeEventArgs
+	{
+		public GrenadeEventArgs () : base(EquipmentElement.HE)
+		{
+			
+		}
+	}
 
 	public class Equipment
 	{

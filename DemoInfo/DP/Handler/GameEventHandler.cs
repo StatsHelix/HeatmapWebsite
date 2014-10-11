@@ -19,6 +19,8 @@ namespace DemoInfo.DP.Handler
 
         List<string> occuredEvents = new List<string>();
 
+		List<Player> blindPlayers = new List<Player>();
+
         public void ApplyMessage(ProtoBuf.IExtensible message, DemoParser parser)
         {
             if (message is CSVCMsg_GameEventList)
@@ -57,7 +59,6 @@ namespace DemoInfo.DP.Handler
 				}
 			}
 
-
 			if (eventDescriptor.name == "player_death") {
 				var data = MapData (eventDescriptor, rawEvent);
 
@@ -72,18 +73,78 @@ namespace DemoInfo.DP.Handler
 
 					parser.RaisePlayerKilled (kill);
 				}
-
-
-
+			}
+			#region Nades
+			if(eventDescriptor.name == "player_blind")
+			{
+				var data = MapData (eventDescriptor, rawEvent);
+				if(parser.Players.ContainsKey((int)data["userid"] - 1))
+					blindPlayers.Add(parser.Players[(int)data["userid"] - 1]);
+			}
+			if (eventDescriptor.name == "flashbang_detonate") {
+				var data = MapData (eventDescriptor, rawEvent);
+				FlashEventArgs args = new FlashEventArgs (blindPlayers.ToArray());
+				FillNadeEvent (args, data, parser);
+				parser.RaiseFlashExploded (args);
+				blindPlayers.Clear();
 			}
 
+			if (eventDescriptor.name == "hegrenade_detonate") {
+				var data = MapData (eventDescriptor, rawEvent);
+				GrenadeEventArgs args = new GrenadeEventArgs ();
+				FillNadeEvent (args, data, parser);
+				parser.RaiseGrenadeExploded (args);
+			}
+			if (eventDescriptor.name == "decoy_started") {
+				var data = MapData (eventDescriptor, rawEvent);
+				DecoyEventArgs args = new DecoyEventArgs ();
+				FillNadeEvent (args, data, parser);
+				parser.RaiseDecoyStart (args);
+			}
+			if (eventDescriptor.name == "decoy_detonate") {
+				var data = MapData (eventDescriptor, rawEvent);
+				DecoyEventArgs args = new DecoyEventArgs ();
+				FillNadeEvent (args, data, parser);
+				parser.RaiseDecoyStart (args);
+			}
+			if (eventDescriptor.name == "smokegrenade_detonate") {
+				var data = MapData (eventDescriptor, rawEvent);
+				SmokeEventArgs args = new SmokeEventArgs ();
+				FillNadeEvent (args, data, parser);
+				parser.RaiseSmokeStart (args);
+			}
+			if (eventDescriptor.name == "smokegrenade_expired") {
+				var data = MapData (eventDescriptor, rawEvent);
+				SmokeEventArgs args = new SmokeEventArgs ();
+				FillNadeEvent (args, data, parser);
+				parser.RaiseSmokeEnd (args);
+			}
+			if (eventDescriptor.name == "inferno_startburn") {
+				var data = MapData (eventDescriptor, rawEvent);
+				FireEventArgs args = new FireEventArgs ();
+				FillNadeEvent (args, data, parser);
+				parser.RaiseFireStart (args);
+			}
+			if (eventDescriptor.name == "inferno_expire") {
+				var data = MapData (eventDescriptor, rawEvent);
+				FireEventArgs args = new FireEventArgs ();
+				FillNadeEvent (args, data, parser);
+				parser.RaiseFireEnd (args);
+			}
 
-
-
-            if (eventDescriptor.name == "hltv_status")
-                return;
-
+			#endregion
         }
+
+		private void FillNadeEvent(NadeEventArgs nade, Dictionary<string, object> data, DemoParser parser)
+		{
+			if (data.ContainsKey ("userid") && parser.Players.ContainsKey ((int)data ["userid"] - 1))
+				nade.ThrownBy = parser.Players [(int)data ["userid"] - 1];
+				
+			Vector vec = new Vector ();
+			vec.X = (float)data ["x"];
+			vec.Y = (float)data ["x"];
+			vec.Z = (float)data ["x"];
+		}
 
 		private Dictionary<string, object> MapData(CSVCMsg_GameEventList.descriptor_t eventDescriptor, CSVCMsg_GameEvent rawEvent)
 		{

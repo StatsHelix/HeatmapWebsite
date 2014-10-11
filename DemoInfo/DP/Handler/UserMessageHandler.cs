@@ -21,7 +21,6 @@ namespace DemoInfo.DP
 
 			var messageType = (Messages.ECstrike15UserMessages)userMessage.msg_type;
 
-			Debug.WriteLine (">>" + messageType.ToString ());
 		}
 
 		public int GetPriority ()
