@@ -34,13 +34,9 @@ Global
 		{D726A3C4-C9C0-46EB-A6DE-84482E316945}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D726A3C4-C9C0-46EB-A6DE-84482E316945}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D726A3C4-C9C0-46EB-A6DE-84482E316945}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B64108C4-7A5F-48A2-BEE2-CB25948036E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B64108C4-7A5F-48A2-BEE2-CB25948036E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B64108C4-7A5F-48A2-BEE2-CB25948036E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B64108C4-7A5F-48A2-BEE2-CB25948036E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = TestDemoPlayer\TestDemoPlayer.csproj
+		StartupItem = HeatmapGenerator\HeatmapGenerator.csproj
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

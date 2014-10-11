@@ -15,7 +15,17 @@ namespace HeatmapGenerator
 				1713.0f,
 				5.0f);
 
-			h.Parse();
+
+			Font f = new Font(FontFamily.GenericSansSerif, 20, FontStyle.Bold);
+			SolidBrush brush = new SolidBrush(Color.CornflowerBlue);
+			foreach(var dic in h.Parse())
+			{
+				Graphics g = Graphics.FromImage(dic.Value);
+
+				g.DrawString("Created with demo.ehvag.de", f, brush, 5, 5);
+
+				dic.Value.Save(dic.Key + ".png", ImageFormat.Png);
+			}
 		}
 	}
 }

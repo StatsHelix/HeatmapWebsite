@@ -18,7 +18,7 @@ namespace HeatmapGenerator
 			for (int i = 0; i < size; i++) {
 				int of255 = (int)( i * ( 255.0 / size ) );
 
-				map[i] = Color.FromArgb(Math.Max(of255 - 50, 0), of255, 30, 255 - of255);
+				map[i] = Color.FromArgb(Math.Max(of255 - 50, 0), of255, 255 - of255, 100);
 			}
 
 			return map;
