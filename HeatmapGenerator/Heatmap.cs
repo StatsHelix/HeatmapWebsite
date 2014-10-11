@@ -22,6 +22,8 @@ namespace HeatmapGenerator
 
 		EventMap TKillOrigin = new EventMap();
 		EventMap CTKillOrigin = new EventMap();
+		EventMap TDeathPosition = new EventMap();
+		EventMap CTDeathPosition = new EventMap();
 
 		Bitmap TPaths = new Bitmap(1024, 1024);
 		Bitmap CTPaths = new Bitmap(1024, 1024);
@@ -80,6 +82,11 @@ namespace HeatmapGenerator
 				CTKillOrigin.AddPoint(MapPoint(e.Killer.Position));
 			else
 				TKillOrigin.AddPoint(MapPoint(e.Killer.Position));
+
+			if (e.DeathPerson.Team == Team.CounterTerrorist)
+				CTKillOrigin.AddPoint(MapPoint(e.DeathPerson.Position));
+			else
+				TKillOrigin.AddPoint(MapPoint(e.DeathPerson.Position));
 		}
 
 		void HandleFireNadeStarted (object sender, FireEventArgs e)
@@ -125,6 +132,8 @@ namespace HeatmapGenerator
 				{ "BothTeamsFire", Fire.Draw(1024, 1024) },
 				{ "TKillOrigin", TKillOrigin.Draw(1024, 1024) },
 				{ "CTKillOrigin", CTKillOrigin.Draw(1024, 1024) },
+				{ "TDeathPosition", TDeathPosition.Draw(1024, 1024) },
+				{ "CTDeathPosition", CTDeathPosition.Draw(1024, 1024) },
 				{ "TPaths", TPaths},
 				{ "CTPaths", CTPaths },
 			};

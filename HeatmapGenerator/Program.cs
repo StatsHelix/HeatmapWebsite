@@ -15,7 +15,6 @@ namespace HeatmapGenerator
 				1713.0f,
 				5.0f);
 
-
 			Font f = new Font(FontFamily.GenericSansSerif, 20, FontStyle.Bold);
 			SolidBrush brush = new SolidBrush(Color.CornflowerBlue);
 			foreach(var dic in h.Parse())
