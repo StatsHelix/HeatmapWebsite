@@ -95,6 +95,7 @@ namespace DemoInfo.DP.Handler
 				FillNadeEvent (args, data, parser);
 				parser.RaiseGrenadeExploded (args);
 			}
+
 			if (eventDescriptor.name == "decoy_started") {
 				var data = MapData (eventDescriptor, rawEvent);
 				DecoyEventArgs args = new DecoyEventArgs ();
@@ -105,7 +106,7 @@ namespace DemoInfo.DP.Handler
 				var data = MapData (eventDescriptor, rawEvent);
 				DecoyEventArgs args = new DecoyEventArgs ();
 				FillNadeEvent (args, data, parser);
-				parser.RaiseDecoyStart (args);
+				parser.RaiseDecoyEnd (args);
 			}
 			if (eventDescriptor.name == "smokegrenade_detonate") {
 				var data = MapData (eventDescriptor, rawEvent);
