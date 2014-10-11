@@ -46,9 +46,10 @@ namespace DemoInfo.DP.Handler
 				GetData (d);
 			}
 
-			if (eventDescriptor.name == "weapon_fire")
-			{
-				var data = MapData (eventDescriptor, rawEvent);
+			Dictionary<string, object> data;
+			switch (eventDescriptor.name) {
+			case "weapon_fire":
+				data = MapData (eventDescriptor, rawEvent);
 
 				if (parser.Players.ContainsKey ((int)data ["userid"] - 1)) {
 					WeaponFiredEventArgs fire = new WeaponFiredEventArgs ();
@@ -57,10 +58,9 @@ namespace DemoInfo.DP.Handler
 
 					parser.RaiseWeaponFired (fire);
 				}
-			}
-
-			if (eventDescriptor.name == "player_death") {
-				var data = MapData (eventDescriptor, rawEvent);
+				break;
+			case "player_death":
+				data = MapData (eventDescriptor, rawEvent);
 
 				PlayerKilledEventArgs kill = new PlayerKilledEventArgs ();
 
@@ -73,38 +73,43 @@ namespace DemoInfo.DP.Handler
 
 					parser.RaisePlayerKilled (kill);
 				}
-			}
+				break;
 
-			#region Nades
-			if(eventDescriptor.name == "player_blind")
-			{
-				var data = MapData (eventDescriptor, rawEvent);
+				#region Nades
+			case "player_blind":
+				data = MapData (eventDescriptor, rawEvent);
 				if(parser.Players.ContainsKey((int)data["userid"] - 1))
 					blindPlayers.Add(parser.Players[(int)data["userid"] - 1]);
-			}
-			if (eventDescriptor.name == "flashbang_detonate") {
+				break;
+			case "flashbang_detonate":
 				var args = FillNadeEvent<FlashEventArgs>(MapData(eventDescriptor, rawEvent), parser);
 				args.FlashedPlayers = blindPlayers.ToArray();
 				parser.RaiseFlashExploded (args);
 				blindPlayers.Clear();
-			}
-
-			if (eventDescriptor.name == "hegrenade_detonate")
+				break;
+			case "hegrenade_detonate":
 				parser.RaiseGrenadeExploded(FillNadeEvent<GrenadeEventArgs>(MapData(eventDescriptor, rawEvent), parser));
-			if (eventDescriptor.name == "decoy_started")
+				break;
+			case "decoy_started":
 				parser.RaiseDecoyStart(FillNadeEvent<DecoyEventArgs>(MapData(eventDescriptor, rawEvent), parser));
-			if (eventDescriptor.name == "decoy_detonate")
+				break;
+			case "decoy_detonate":
 				parser.RaiseDecoyEnd(FillNadeEvent<DecoyEventArgs>(MapData(eventDescriptor, rawEvent), parser));
-			if (eventDescriptor.name == "smokegrenade_detonate")
+				break;
+			case "smokegrenade_detonate":
 				parser.RaiseSmokeStart(FillNadeEvent<SmokeEventArgs>(MapData(eventDescriptor, rawEvent), parser));
-			if (eventDescriptor.name == "smokegrenade_expired")
+				break;
+			case "smokegrenade_expired":
 				parser.RaiseSmokeEnd(FillNadeEvent<SmokeEventArgs>(MapData(eventDescriptor, rawEvent), parser));
-			if (eventDescriptor.name == "inferno_startburn")
+				break;
+			case "inferno_startburn":
 				parser.RaiseFireStart(FillNadeEvent<FireEventArgs>(MapData(eventDescriptor, rawEvent), parser));
-			if (eventDescriptor.name == "inferno_expire")
+				break;
+			case "inferno_expire":
 				parser.RaiseFireEnd(FillNadeEvent<FireEventArgs>(MapData(eventDescriptor, rawEvent), parser));
-
-			#endregion
+				break;
+				#endregion
+			}
         }
 
 		private T FillNadeEvent<T>(Dictionary<string, object> data, DemoParser parser) where T : NadeEventArgs, new()
