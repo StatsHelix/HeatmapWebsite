@@ -130,15 +130,15 @@ namespace DemoInfo
             return b;
         }
 
-        private void ParseHeader()
+		private void ParseHeader() 
         {
-            var header = DemoHeader.ParseFrom(reader);
+			var header = DemoHeader.ParseFrom(reader); 
 
             if (header.Filestamp != "HL2DEMO")
                 throw new Exception("Invalid File-Type - expecting HL2DEMO");
 
             if (header.Protocol != 4)
-                throw new Exception("Invalid Demo-Protocol");
+				throw new Exception("Invalid Demo-Protocol"); 
 
             Header = header;
         }

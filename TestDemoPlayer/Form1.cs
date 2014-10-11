@@ -116,7 +116,7 @@ namespace TestDemoPlayer
                 .First(a => a.Contains("\"scale\""))
                 .Split('"')[3], CultureInfo.InvariantCulture);
 
-            Bitmap image = new Bitmap(file);
+			Bitmap image = new Bitmap(file); 
 
             pictureBox1.BackgroundImage = image;
             pictureBox1.BackgroundImageLayout = ImageLayout.Zoom;

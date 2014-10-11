@@ -53,7 +53,7 @@ namespace DemoInfo.DP.Handler
                     if (reader.ReadBit())
 					{
 						parser.entites.Remove(currentEntity);
-						if (parser.Players.ContainsKey (currentEntity))
+						if (parser.Players.ContainsKey (currentEntity)) 
 							parser.Players.Remove (currentEntity);
                     }
 
