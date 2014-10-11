@@ -84,9 +84,9 @@ namespace HeatmapGenerator
 				TKillOrigin.AddPoint(MapPoint(e.Killer.Position));
 
 			if (e.DeathPerson.Team == Team.CounterTerrorist)
-				CTKillOrigin.AddPoint(MapPoint(e.DeathPerson.Position));
+				CTDeathPosition.AddPoint(MapPoint(e.DeathPerson.Position));
 			else
-				TKillOrigin.AddPoint(MapPoint(e.DeathPerson.Position));
+				TDeathPosition.AddPoint(MapPoint(e.DeathPerson.Position));
 		}
 
 		void HandleFireNadeStarted (object sender, FireEventArgs e)
