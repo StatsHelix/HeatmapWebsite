@@ -140,7 +140,7 @@ namespace TestDemoPlayer
 		SolidBrush brush3 = new SolidBrush(col3);
         void parser_TickDone(object sender, TickDoneEventArgs e)
         {
-			if (i++ % 1 != 0)
+			if (i++ % 32 != 0)
 			{
 				return;
 			}
@@ -166,7 +166,7 @@ namespace TestDemoPlayer
 
 					if (firequeue.Contains (player)) {
 						brush = brush3;
-						firequeue.RemoveAt(firequeue.IndexOf (player));
+						firequeue.RemoveAll(a => a == player);
 					}
 
 				} else {
