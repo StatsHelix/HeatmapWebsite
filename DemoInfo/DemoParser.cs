@@ -95,7 +95,7 @@ namespace DemoInfo
 			foreach (var type in entites.Values.Where(a => !types.Contains(a.ServerClass.Name))) {
 				types.Add (type.ServerClass.Name);
 
-				Console.WriteLine ("##" + type.ServerClass.Name);
+				//Console.WriteLine ("##" + type.ServerClass.Name);
 			}
 
 
