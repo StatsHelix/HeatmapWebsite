@@ -29,12 +29,12 @@ namespace HeatmapGenerator
 
 		public Dictionary<string, Image> Parse()
 		{
-
 			parser.ParseDemo(true);
 
-			TFlashes.Draw(1024, 1024).Save("TFlashes.png", ImageFormat.Png);
-			CTFlashes.Draw(1024, 1024).Save("CTFlashes.png", ImageFormat.Png);
-
+			return new Dictionary<string, Image>() {
+				{ "TFlashes", TFlashes.Draw(1024, 1024) },
+				{ "CTFlashes", CTFlashes.Draw(1024, 1024) },
+			};
 		}
 
 		void HandleFlashNadeExploded (object sender, FlashEventArgs e)
