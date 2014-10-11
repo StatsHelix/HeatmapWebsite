@@ -59,9 +59,16 @@ namespace TestDemoPlayer
             parser.TickDone += parser_TickDone;
             parser.MatchStarted += parser_MatchStarted;
 			parser.PlayerKilled += HandlePlayerKilled;
+			parser.WeaponFired += HandleWeaponFired;
         }
 
-        void HandlePlayerKilled (object sender, PlayerKilled e)
+		List<Player> firequeue = new List<Player>();
+        void HandleWeaponFired (object sender, WeaponFiredEventArgs e)
+        {
+			firequeue.Add (e.Shooter);
+        }
+
+        void HandlePlayerKilled (object sender, PlayerKilledEventArgs e)
         {
 			this.Text =  (
 				String.Format(
@@ -76,7 +83,7 @@ namespace TestDemoPlayer
 			);
         }
 
-        void parser_MatchStarted(object sender, MatchStarted e)
+        void parser_MatchStarted(object sender, MatchStartedEventArgs e)
         {
             g.Clear(Color.Transparent);
             this.Text = "LIVE!";
@@ -127,11 +134,13 @@ namespace TestDemoPlayer
 
 		static Color col1 = Color.FromArgb(255, Color.OrangeRed);
 		static Color col2 = Color.FromArgb(255, Color.CornflowerBlue);
+		static Color col3 = Color.FromArgb(255, Color.White);
 		SolidBrush brush1 = new SolidBrush(col1);
 		SolidBrush brush2 = new SolidBrush(col2);
-        void parser_TickDone(object sender, TickDone e)
+		SolidBrush brush3 = new SolidBrush(col3);
+        void parser_TickDone(object sender, TickDoneEventArgs e)
         {
-			if (i++ % 16 != 0)
+			if (i++ % 1 != 0)
 			{
 				return;
 			}
@@ -154,6 +163,12 @@ namespace TestDemoPlayer
 
 				if (player.IsAlive) {
 					brush = player.Team == Team.Terrorist ? brush1 : brush2;
+
+					if (firequeue.Contains (player)) {
+						brush = brush3;
+						firequeue.RemoveAt(firequeue.IndexOf (player));
+					}
+
 				} else {
 					brush = new SolidBrush (Color.Red);
 				}

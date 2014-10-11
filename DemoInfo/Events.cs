@@ -6,26 +6,26 @@ using System.Threading.Tasks;
 
 namespace DemoInfo
 {
-    public class HeaderParsed : EventArgs
+    public class HeaderParsedEventArgs : EventArgs
     {
         public DemoHeader Header { get; private set; }
 
-        public HeaderParsed(DemoHeader header)
+        public HeaderParsedEventArgs(DemoHeader header)
         {
             this.Header = header;
         }
     }
 
-    public class TickDone : EventArgs
+    public class TickDoneEventArgs : EventArgs
     {
     }
 
-    public class MatchStarted : EventArgs
+    public class MatchStartedEventArgs : EventArgs
     {
 
 	}
 
-	public class PlayerKilled : EventArgs
+	public class PlayerKilledEventArgs : EventArgs
 	{
 		public Equipment Weapon { get; internal set; }
 
@@ -36,6 +36,13 @@ namespace DemoInfo
 		public int PenetratedObjects { get; internal set; }
 
 		public bool Headshot { get; internal set; }
+	}
+
+	public class WeaponFiredEventArgs : EventArgs
+	{
+		public Equipment Weapon { get; internal set; }
+
+		public Player Shooter { get; internal set; }
 	}
 
 

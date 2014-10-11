@@ -44,10 +44,24 @@ namespace DemoInfo.DP.Handler
 				GetData (d);
 			}
 
+			if (eventDescriptor.name == "weapon_fire")
+			{
+				var data = MapData (eventDescriptor, rawEvent);
+
+				if (parser.Players.ContainsKey ((int)data ["userid"] - 1)) {
+					WeaponFiredEventArgs fire = new WeaponFiredEventArgs ();
+					fire.Shooter = parser.Players [(int)data ["userid"] - 1];
+					fire.Weapon = new Equipment ((string)data ["weapon"]);
+
+					parser.RaiseWeaponFired (fire);
+				}
+			}
+
+
 			if (eventDescriptor.name == "player_death") {
 				var data = MapData (eventDescriptor, rawEvent);
 
-				PlayerKilled kill = new PlayerKilled ();
+				PlayerKilledEventArgs kill = new PlayerKilledEventArgs ();
 
 				if (parser.Players.ContainsKey ((int)data ["userid"] - 1) && parser.Players.ContainsKey ((int)data ["attacker"] - 1)) {
 					kill.DeathPerson = parser.Players [(int)data ["userid"] - 1];
@@ -62,6 +76,9 @@ namespace DemoInfo.DP.Handler
 
 
 			}
+
+
+
 
             if (eventDescriptor.name == "hltv_status")
                 return;
