@@ -1,22 +1,37 @@
-﻿
-namespace WebAPI
+﻿using System;
+using System.Net;
+using System.IO;
+using System.Drawing;
+using System.Threading;
+using System.Collections.Concurrent;
+using HeatmapGenerator;
+using Newtonsoft.Json;
+
+namespace FuckThisFuckingCGIFuck
 {
-	using System;
-	using System.IO;
-	using System.Drawing;
-	using System.Linq;
-	using System.Web;
-	using System.Web.UI;
-	using Newtonsoft.Json;
-	using HeatmapGenerator;
-
-	public class GenerateHeatmap : System.Web.IHttpHandler
+	class MainClass
 	{
-		public bool IsReusable { get { return false; } }
+		// singlethreaded for rate limiting
+		// it's not a bug, it's a feature!!!!!!!!1111111oneoneoneeleven #believe
+		public static void Main(string[] args)
+		{
+			var listener = new HttpListener();
+			listener.Prefixes.Add("/");
+			listener.Start();
+			while (true) {
+				ProcessRequest(listener.GetContext());
+			}
+		}
 
-		public void ProcessRequest (HttpContext context)
+		private static string MULTIPART_PREFIX = "multipart/form-data; boundary=";
+		public static void ProcessRequest (HttpListenerContext context)
 		{
 			var req = context.Request;
+
+			if (req.ContentType.StartsWith(MULTIPART_PREFIX))
+				throw new Exception("must be multipart form");
+			var multipart = new HttpMultipart(req.InputStream, req.ContentType.Substring(MULTIPART_PREFIX.Length), req.ContentEncoding);
+
 			context.Response.ContentType = "application/json";
 
 			float posX, posY, scale;
@@ -53,4 +68,3 @@ namespace WebAPI
 		}
 	}
 }
-
