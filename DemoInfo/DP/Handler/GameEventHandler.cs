@@ -143,8 +143,9 @@ namespace DemoInfo.DP.Handler
 				
 			Vector vec = new Vector ();
 			vec.X = (float)data ["x"];
-			vec.Y = (float)data ["x"];
-			vec.Z = (float)data ["x"];
+			vec.Y = (float)data ["y"];
+			vec.Z = (float)data ["z"];
+			nade.Position = vec;
 		}
 
 		private Dictionary<string, object> MapData(CSVCMsg_GameEventList.descriptor_t eventDescriptor, CSVCMsg_GameEvent rawEvent)
