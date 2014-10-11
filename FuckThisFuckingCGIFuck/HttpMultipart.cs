@@ -42,6 +42,8 @@ namespace FuckThisFuckingCGIFuck
 
 		const byte HYPHEN = (byte) '-', LF = (byte) '\n', CR = (byte) '\r';
 
+		string lastElementName = null;
+
 		// See RFC 2046 
 		// In the case of multipart entities, in which one or more different
 		// sets of data are combined in a single body, a "multipart" media type
@@ -60,6 +62,17 @@ namespace FuckThisFuckingCGIFuck
 			buffer = new byte [boundary_bytes.Length + 2]; // CRLF or '--'
 			this.encoding = encoding;
 			sb = new StringBuilder ();
+		}
+
+		public HttpMultipart (Stream data, string b, Encoding encoding, string lastElementName)
+		{
+			this.data = data;
+			boundary = b;
+			boundary_bytes = encoding.GetBytes (b);
+			buffer = new byte [boundary_bytes.Length + 2]; // CRLF or '--'
+			this.encoding = encoding;
+			sb = new StringBuilder ();
+			this.lastElementName = lastElementName;
 		}
 
 		string ReadLine ()
@@ -236,10 +249,16 @@ namespace FuckThisFuckingCGIFuck
 
 			Element elem = new Element ();
 			string header;
+			bool stopDoNotMovePutYourHandsInTheAir = false;
+
 			while ((header = ReadHeaders ()) != null) {
 				if (StrUtils.StartsWith (header, "Content-Disposition:", true)) {
 					elem.Name = GetContentDispositionAttribute (header, "name");
 					elem.Filename = StripPath (GetContentDispositionAttributeWithEncoding (header, "filename"));
+
+					if (elem.Name == lastElementName)
+						stopDoNotMovePutYourHandsInTheAir = true;
+
 				} else if (StrUtils.StartsWith (header, "Content-Type:", true)) {
 					elem.ContentType = header.Substring ("Content-Type:".Length).Trim ();
 				}
@@ -247,6 +266,10 @@ namespace FuckThisFuckingCGIFuck
 
 			long start = data.Position;
 			elem.Start = start;
+
+			if (stopDoNotMovePutYourHandsInTheAir)
+				return null;
+
 			long pos = MoveToNextBoundary ();
 			if (pos == -1)
 				return null;
