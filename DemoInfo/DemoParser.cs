@@ -101,33 +101,39 @@ namespace DemoInfo
 
             foreach (var entity in entites.Values.Where(a => a.ServerClass.Name == "CCSPlayer"))
             {
-				if(entity.Properties.ContainsKey("m_vecOrigin") && entity.Properties.ContainsKey("m_iHealth") && RawPlayers.ContainsKey(entity.ID - 1))
-                {
-					if (!Players.ContainsKey (entity.ID))
-						Players [entity.ID] = new Player ();
+				if (entity.Properties.ContainsKey("m_vecOrigin") && RawPlayers.ContainsKey(entity.ID - 1)) {
+					if (!Players.ContainsKey(entity.ID))
+						Players[entity.ID] = new Player();
 
-					Player p = Players [entity.ID];
+					Player p = Players[entity.ID];
 
 
-                    p.EntityID = entity.ID;
-                    p.Position = (Vector)entity.Properties["m_vecOrigin"];
-					p.HP = (int)entity.Properties ["m_iHealth"];
-                    p.Name = RawPlayers[entity.ID - 1].Name;
-                    p.SteamID = RawPlayers[entity.ID - 1].FriendsID;
-                    p.Team = (Team)entity.Properties["m_iTeamNum"];
+					p.EntityID = entity.ID;
+					p.Position = (Vector)entity.Properties["m_vecOrigin"];
+					p.Team = (Team)entity.Properties["m_iTeamNum"];
 
-					if(entity.Properties.ContainsKey("m_angEyeAngles[1]"))
-						p.ViewDirectionX = (float)entity.Properties ["m_angEyeAngles[1]"] + 90;
+					if(p.Team != Team.Spectate && entity.Properties.ContainsKey("m_iHealth"))
+						p.HP = (int)entity.Properties["m_iHealth"];
+					else 
+						p.HP = -1;
 
-					if(entity.Properties.ContainsKey("m_angEyeAngles[0]"))
-						p.ViewDirectionY = (float)entity.Properties ["m_angEyeAngles[0]"];
+					p.Name = RawPlayers[entity.ID - 1].Name;
+					p.SteamID = RawPlayers[entity.ID - 1].FriendsID;
+
+					if (entity.Properties.ContainsKey("m_angEyeAngles[1]"))
+						p.ViewDirectionX = (float)entity.Properties["m_angEyeAngles[1]"] + 90;
+
+					if (entity.Properties.ContainsKey("m_angEyeAngles[0]"))
+						p.ViewDirectionY = (float)entity.Properties["m_angEyeAngles[0]"];
 
 
 
 					if (p.IsAlive) {
 						p.LastAlivePosition = p.Position;
 					}
-                }
+				} else
+				{
+				}
 			}
 
 			foreach (var entity in entites.Values.Where(a => a.ServerClass.Name == "CCSPlayerResource"))
