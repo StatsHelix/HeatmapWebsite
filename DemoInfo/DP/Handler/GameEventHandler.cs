@@ -51,9 +51,9 @@ namespace DemoInfo.DP.Handler
 			case "weapon_fire":
 				data = MapData (eventDescriptor, rawEvent);
 
-				if (parser.Players.ContainsKey ((int)data ["userid"] - 2)) {
+				if (parser.Players.ContainsKey ((int)data ["userid"])) {
 					WeaponFiredEventArgs fire = new WeaponFiredEventArgs ();
-					fire.Shooter = parser.Players [(int)data ["userid"] - 2];
+					fire.Shooter = parser.Players [(int)data ["userid"]];
 					fire.Weapon = new Equipment ((string)data ["weapon"]);
 
 					parser.RaiseWeaponFired (fire);
@@ -64,9 +64,9 @@ namespace DemoInfo.DP.Handler
 
 				PlayerKilledEventArgs kill = new PlayerKilledEventArgs();
 
-				if (parser.Players.ContainsKey((int)data["userid"] - 1) && parser.Players.ContainsKey((int)data["attacker"] - 1)) {
-					kill.DeathPerson = parser.Players[(int)data["userid"] - 2];
-					kill.Killer = parser.Players[(int)data["attacker"] - 2];
+				if (parser.Players.ContainsKey((int)data["userid"]) && parser.Players.ContainsKey((int)data["attacker"])) {
+					kill.DeathPerson = parser.Players[(int)data["userid"]];
+					kill.Killer = parser.Players[(int)data["attacker"]];
 					kill.Headshot = (bool)data["headshot"];
 					kill.Weapon = new Equipment((string)data["weapon"], (string)data["weapon_itemid"]);
 					kill.PenetratedObjects = (int)data["penetrated"];
@@ -118,8 +118,8 @@ namespace DemoInfo.DP.Handler
 		{
 			var nade = new T();
 
-			if (data.ContainsKey ("userid") && parser.Players.ContainsKey ((int)data ["userid"] - 2))
-				nade.ThrownBy = parser.Players [(int)data ["userid"] - 2];
+			if (data.ContainsKey ("userid") && parser.Players.ContainsKey ((int)data ["userid"]))
+				nade.ThrownBy = parser.Players [(int)data ["userid"]];
 				
 			Vector vec = new Vector ();
 			vec.X = (float)data ["x"];

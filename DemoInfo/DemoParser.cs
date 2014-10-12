@@ -99,47 +99,55 @@ namespace DemoInfo
 			}
 
 
-            foreach (var entity in entites.Values.Where(a => a.ServerClass.Name == "CCSPlayer"))
+            foreach(var rawPlayer in RawPlayers)
             {
-				if (entity.Properties.ContainsKey("m_vecOrigin") && RawPlayers.ContainsKey(entity.ID - 1)) {
-					if (!Players.ContainsKey(entity.ID))
-						Players[entity.ID] = new Player();
+                int id = rawPlayer.Value.UserID;
+                if (!entites.ContainsKey(id - 1))
+                    continue;
+                
+                Entity entity = entites[id - 1];
 
-					Player p = Players[entity.ID];
+                
+                if (entity.Properties.ContainsKey("m_vecOrigin"))
+                {
+                    if (!Players.ContainsKey(id))
+                        Players[id] = new Player();
 
-
-					p.EntityID = entity.ID;
-					p.Position = (Vector)entity.Properties["m_vecOrigin"];
-					p.Team = (Team)entity.Properties["m_iTeamNum"];
-
-					if(p.Team != Team.Spectate && entity.Properties.ContainsKey("m_iHealth"))
-						p.HP = (int)entity.Properties["m_iHealth"];
-					else 
-						p.HP = -1;
-
-					p.Name = RawPlayers[entity.ID - 1].Name;
-					p.SteamID = RawPlayers[entity.ID - 1].FriendsID;
-
-					if (entity.Properties.ContainsKey("m_angEyeAngles[1]"))
-						p.ViewDirectionX = (float)entity.Properties["m_angEyeAngles[1]"] + 90;
-
-					if (entity.Properties.ContainsKey("m_angEyeAngles[0]"))
-						p.ViewDirectionY = (float)entity.Properties["m_angEyeAngles[0]"];
+                    Player p = Players[id];
+                    p.EntityID = entity.ID;
 
 
+                    p.EntityID = entity.ID;
+                    p.Position = (Vector)entity.Properties["m_vecOrigin"];
 
-					if (p.IsAlive) {
-						p.LastAlivePosition = p.Position;
-					}
-				} else
-				{
-				}
-			}
+                    if (entity.Properties.ContainsKey("m_iTeamNum"))
+                        p.Team = (Team)entity.Properties["m_iTeamNum"];
+                    else
+                        p.Team = Team.Spectate;
 
-			foreach (var entity in entites.Values.Where(a => a.ServerClass.Name == "CCSPlayerResource"))
-			{
+                    if (p.Team != Team.Spectate && entity.Properties.ContainsKey("m_iHealth"))
+                        p.HP = (int)entity.Properties["m_iHealth"];
+                    else
+                        p.HP = -1;
 
-			}
+
+                    p.Name = RawPlayers[id].Name;
+                    p.SteamID = RawPlayers[id].FriendsID;
+
+                    if (entity.Properties.ContainsKey("m_angEyeAngles[1]"))
+                        p.ViewDirectionX = (float)entity.Properties["m_angEyeAngles[1]"] + 90;
+
+                    if (entity.Properties.ContainsKey("m_angEyeAngles[0]"))
+                        p.ViewDirectionY = (float)entity.Properties["m_angEyeAngles[0]"];
+
+
+                    if (p.IsAlive)
+                    {
+                        p.LastAlivePosition = p.Position;
+                    }
+                }
+
+            }
 
             if (b)
             {

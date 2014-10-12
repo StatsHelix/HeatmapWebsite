@@ -140,7 +140,7 @@ namespace TestDemoPlayer
 		SolidBrush brush3 = new SolidBrush(col3);
         void parser_TickDone(object sender, TickDoneEventArgs e)
         {
-			if (i++ % 32 != 0)
+			if (i++ % 1 != 0)
 			{
 				return;
 			}
@@ -148,7 +148,7 @@ namespace TestDemoPlayer
             g.Clear(Color.Transparent);
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-			foreach(var player in parser.Players.Values)
+			foreach(var player in parser.Players.Values.Where(a => a.Team != Team.Spectate))
             {
 				var p = MapPoint(player.LastAlivePosition);
 				var endPoint = p;

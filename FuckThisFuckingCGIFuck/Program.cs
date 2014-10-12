@@ -36,13 +36,22 @@ namespace FuckThisFuckingCGIFuck
 		{
 			var listener = (HttpListener)data;
 			while (true) {
+                HttpListenerContext ctx = null;
 				try
 				{
-					HandleRequest(listener.GetContext());
+                    ctx = listener.GetContext();
+					HandleRequest(ctx);
 				}
 				catch(Exception e)
 				{
 					Console.WriteLine(e);
+                    try
+                    {
+                        if(ctx != null)
+                            ctx.Response.Abort();
+                    }
+                    catch
+                    {}
 				}
 			}
 		}
