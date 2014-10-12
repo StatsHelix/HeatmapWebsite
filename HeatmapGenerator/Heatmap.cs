@@ -29,6 +29,11 @@ namespace HeatmapGenerator
 		Bitmap CTPaths = new Bitmap(1024, 1024);
 		Graphics TPathsG, CTPathsG;
 
+
+		Bitmap TKills = new Bitmap(1024, 1024);
+		Bitmap CTKills = new Bitmap(1024, 1024);
+		Graphics TKillsG, CTKillsG;
+
 		float mapX, mapY, scale;
 
 		public Heatmap (Stream demo, float posX, float posY, float scale)
@@ -36,6 +41,9 @@ namespace HeatmapGenerator
 			parser = new DemoParser (demo);
 			TPathsG = Graphics.FromImage(TPaths);
 			CTPathsG = Graphics.FromImage(CTPaths);
+			TKillsG = Graphics.FromImage(TKills);
+			CTKillsG = Graphics.FromImage(CTKills);
+
 
 			parser.MatchStarted += (object sender, MatchStartedEventArgs e) => {
 				parser.FlashNadeExploded += HandleFlashNadeExploded;
@@ -50,6 +58,10 @@ namespace HeatmapGenerator
 			this.mapY = posY;
 			this.scale = scale;
 		}
+
+
+		SolidBrush TBrushSolid = new SolidBrush(Color.FromArgb(200, Color.OrangeRed));
+		SolidBrush CTBrushSolid = new SolidBrush(Color.FromArgb(200, Color.CornflowerBlue));
 
 		SolidBrush TBrush = new SolidBrush(Color.FromArgb(30, Color.OrangeRed));
 		SolidBrush CTBrush = new SolidBrush(Color.FromArgb(30, Color.CornflowerBlue));
@@ -87,6 +99,15 @@ namespace HeatmapGenerator
 				CTDeathPosition.AddPoint(MapPoint(e.DeathPerson.Position));
 			else
 				TDeathPosition.AddPoint(MapPoint(e.DeathPerson.Position));
+
+			Graphics g = e.Killer.Team == Team.CounterTerrorist ? CTKillsG : TKillsG;
+			Brush b = e.Killer.Team == Team.CounterTerrorist ? CTBrushSolid : TBrushSolid;
+
+			Point p1 = MapPoint(e.Killer.Position), p2 = MapPoint(e.DeathPerson.Position);
+			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+			g.DrawLine(new Pen(b, 1.5f), p1, p2);
+			g.FillEllipse(b, p1.X - 2, p1.Y - 2, 5, 5);
+			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
 		}
 
 		void HandleFireNadeStarted (object sender, FireEventArgs e)
@@ -146,6 +167,8 @@ namespace HeatmapGenerator
 				{ "CTDeathPosition", CTDeathPosition.Draw(1024, 1024) },
 				{ "TPaths", TPaths},
 				{ "CTPaths", CTPaths },
+				{ "TKills", TKills},
+				{ "CTKills", CTKills },
 			};
 
 		}
