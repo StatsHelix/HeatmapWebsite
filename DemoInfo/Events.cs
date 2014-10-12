@@ -275,6 +275,9 @@ namespace DemoInfo
 				case "inferno":
 					weapon = EquipmentElement.Incendiary;
 					break;
+                case "usp_silencer_off":
+                    weapon = EquipmentElement.USP;
+                    break;
                 default:
                     Console.WriteLine("Unknown weapon. " + OriginalString);
                     break;

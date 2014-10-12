@@ -93,7 +93,7 @@ namespace TestDemoPlayer
         private void LoadBackgroundInfo()
         {
             //Okay, set the background-image. 
-			var lines = File.ReadAllLines(Path.Combine("overviews", parser.Map + ".txt"));
+			var lines = File.ReadAllLines(Path.Combine("overviews", Path.GetFileName(parser.Map) + ".txt"));
 
             var file = lines
                 .First(a => a.Contains("\"material\""))
