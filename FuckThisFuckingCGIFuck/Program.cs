@@ -32,7 +32,7 @@ namespace FuckThisFuckingCGIFuck
 			var multipart = new HttpMultipart(req.InputStream, req.ContentType.Substring(MULTIPART_PREFIX.Length), req.ContentEncoding, "demo");
 
 			multipart.ReadBoundary();
-			var eMapImage = multipart.ReadNextElement(1024 * 1024);
+			var eMapImage = multipart.ReadNextElement(5 * 1024 * 1024);
 			var ePosX = multipart.ReadNextElement(256);
 			var ePosY = multipart.ReadNextElement(256);
 			var eScale = multipart.ReadNextElement(256);
