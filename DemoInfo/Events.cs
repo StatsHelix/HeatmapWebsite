@@ -140,7 +140,7 @@ namespace DemoInfo
 		{
 			EquipmentElement weapon = EquipmentElement.Unknown;
 
-			if (OriginalString.Contains ("knife")) {
+			if (OriginalString.Contains ("knife") || OriginalString == "bayonet") {
 				weapon = EquipmentElement.Knife;
 			}
 
@@ -275,8 +275,9 @@ namespace DemoInfo
 				case "inferno":
 					weapon = EquipmentElement.Incendiary;
 					break;
-				default: 
-					throw new InvalidOperationException("Unknown weapon" + weapon);
+                default:
+                    Console.WriteLine("Unknown weapon. " + OriginalString);
+                    break;
 				}
 			}
 

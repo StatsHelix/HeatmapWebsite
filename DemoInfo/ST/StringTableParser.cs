@@ -46,9 +46,7 @@ namespace DemoInfo.ST
                     {
                         PlayerInfo info = PlayerInfo.ParseFrom(new BinaryReader(new MemoryStream(data)));
                         
-						int dummy;
-						if(int.TryParse(stringName, out dummy))
-							parser.RawPlayers[dummy] = info;
+						parser.RawPlayers[info.UserID] = info;
                     }
                 }
             }
