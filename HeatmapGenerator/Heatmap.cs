@@ -106,7 +106,7 @@ namespace HeatmapGenerator
 			Point p1 = MapPoint(e.Killer.Position), p2 = MapPoint(e.DeathPerson.Position);
 			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 			g.DrawLine(new Pen(b, 1.5f), p1, p2);
-			g.FillEllipse(b, p1.X - 2, p1.Y - 2, 5, 5);
+			g.FillEllipse(b, p1.X - 3, p1.Y - 3, 7, 7);
 			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
 		}
 
