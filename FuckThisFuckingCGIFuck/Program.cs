@@ -6,7 +6,6 @@ using System.Threading;
 using System.Collections.Concurrent;
 using HeatmapGenerator;
 using Newtonsoft.Json;
-using System.Threading;
 using System.Globalization;
 
 namespace FuckThisFuckingCGIFuck
@@ -35,25 +34,20 @@ namespace FuckThisFuckingCGIFuck
 
 		public static void Work(object data)
 		{
-			var listener (HttpListener)data;
+			var listener = (HttpListener)data;
 			while (true) {
-				ProcessRequest(listener.GetContext());
+				try
+				{
+					HandleRequest(listener.GetContext());
+				}
+				catch(Exception e)
+				{
+					Console.WriteLine(e);
+				}
 			}
 		}
 
 		private static string MULTIPART_PREFIX = "multipart/form-data; boundary=";
-		public static void ProcessRequest (HttpListenerContext context)
-		{
-			try
-			{
-				HandleRequest(context);
-			}
-			catch(Exception e)
-			{
-
-			}
-		}
-
 		static void HandleRequest(HttpListenerContext context)
 		{
 			var req = context.Request;
