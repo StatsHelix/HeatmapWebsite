@@ -59,6 +59,8 @@ namespace FuckThisFuckingCGIFuck
 		private static string MULTIPART_PREFIX = "multipart/form-data; boundary=";
 		static void HandleRequest(HttpListenerContext context)
 		{
+			bool watermark = false;
+
 			var req = context.Request;
 			var multipart = new HttpMultipart(req.InputStream, req.ContentType.Substring(MULTIPART_PREFIX.Length), req.ContentEncoding, "demo");
 			multipart.ReadBoundary();
@@ -67,6 +69,13 @@ namespace FuckThisFuckingCGIFuck
 			var ePosY = multipart.ReadNextElement(256);
 			var eScale = multipart.ReadNextElement(256);
 			var eWatermark = multipart.ReadNextElement(256);
+			if (eWatermark != null) {
+				if (eWatermark.Name != "watermark")
+					throw new Exception("ewatermark invalid");
+				watermark = true;
+			}
+			// else no watermark checked, demo is now
+
 			var eDemo = multipart.ReadNextElement(256);
 			// shall be null
 			if (eMapImage.Name != "map")
@@ -77,8 +86,6 @@ namespace FuckThisFuckingCGIFuck
 				throw new Exception("eposy invalid");
 			if (eScale.Name != "scale")
 				throw new Exception("escale invalid");
-			if (eWatermark.Name != "watermark")
-				throw new Exception("ewatermark invalid");
 			if (eDemo != null)
 				throw new Exception("lolwat");
 			context.Response.ContentType = "application/json";
@@ -112,6 +119,12 @@ namespace FuckThisFuckingCGIFuck
 				Directory.CreateDirectory(basepath);
 				var files = new Heatmap(req.InputStream, posX, posY, scale).Parse();
 				foreach (var item in files) {
+					if (watermark) {
+						Font f = new Font(FontFamily.GenericSansSerif, 20, FontStyle.Bold);
+						SolidBrush brush = new SolidBrush(Color.CornflowerBlue);
+						Graphics g = Graphics.FromImage(item.Value);
+						g.DrawString("Created with demo.ehvag.de", f, brush, 5, 5);
+					}
 					item.Value.Save(Path.Combine(basepath, item.Key + ".png"), System.Drawing.Imaging.ImageFormat.Png);
 				}
 				map.Save(Path.Combine(basepath, "map.png"), System.Drawing.Imaging.ImageFormat.Png);
