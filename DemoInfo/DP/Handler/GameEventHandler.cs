@@ -51,35 +51,37 @@ namespace DemoInfo.DP.Handler
 			case "weapon_fire":
 				data = MapData (eventDescriptor, rawEvent);
 
-				if (parser.Players.ContainsKey ((int)data ["userid"] - 1)) {
+				if (parser.Players.ContainsKey ((int)data ["userid"] - 2)) {
 					WeaponFiredEventArgs fire = new WeaponFiredEventArgs ();
-					fire.Shooter = parser.Players [(int)data ["userid"] - 1];
+					fire.Shooter = parser.Players [(int)data ["userid"] - 2];
 					fire.Weapon = new Equipment ((string)data ["weapon"]);
 
 					parser.RaiseWeaponFired (fire);
 				}
 				break;
 			case "player_death":
-				data = MapData (eventDescriptor, rawEvent);
+				data = MapData(eventDescriptor, rawEvent);
 
-				PlayerKilledEventArgs kill = new PlayerKilledEventArgs ();
+				PlayerKilledEventArgs kill = new PlayerKilledEventArgs();
 
-				if (parser.Players.ContainsKey ((int)data ["userid"] - 1) && parser.Players.ContainsKey ((int)data ["attacker"] - 1)) {
-					kill.DeathPerson = parser.Players [(int)data ["userid"] - 1];
-					kill.Killer = parser.Players [(int)data ["attacker"] - 1];
-					kill.Headshot = (bool)data ["headshot"];
-					kill.Weapon = new Equipment ((string)data ["weapon"],(string) data ["weapon_itemid"]);
-					kill.PenetratedObjects = (int)data ["penetrated"];
+				if (parser.Players.ContainsKey((int)data["userid"] - 1) && parser.Players.ContainsKey((int)data["attacker"] - 1)) {
+					kill.DeathPerson = parser.Players[(int)data["userid"] - 2];
+					kill.Killer = parser.Players[(int)data["attacker"] - 2];
+					kill.Headshot = (bool)data["headshot"];
+					kill.Weapon = new Equipment((string)data["weapon"], (string)data["weapon_itemid"]);
+					kill.PenetratedObjects = (int)data["penetrated"];
 
-					parser.RaisePlayerKilled (kill);
+					parser.RaisePlayerKilled(kill);
+				} else
+				{
 				}
 				break;
 
 				#region Nades
 			case "player_blind":
 				data = MapData (eventDescriptor, rawEvent);
-				if(parser.Players.ContainsKey((int)data["userid"] - 1))
-					blindPlayers.Add(parser.Players[(int)data["userid"] - 1]);
+				if(parser.Players.ContainsKey((int)data["userid"] - 2))
+					blindPlayers.Add(parser.Players[(int)data["userid"] - 2]);
 				break;
 			case "flashbang_detonate":
 				var args = FillNadeEvent<FlashEventArgs>(MapData(eventDescriptor, rawEvent), parser);
@@ -116,8 +118,8 @@ namespace DemoInfo.DP.Handler
 		{
 			var nade = new T();
 
-			if (data.ContainsKey ("userid") && parser.Players.ContainsKey ((int)data ["userid"] - 1))
-				nade.ThrownBy = parser.Players [(int)data ["userid"] - 1];
+			if (data.ContainsKey ("userid") && parser.Players.ContainsKey ((int)data ["userid"] - 2))
+				nade.ThrownBy = parser.Players [(int)data ["userid"] - 2];
 				
 			Vector vec = new Vector ();
 			vec.X = (float)data ["x"];
