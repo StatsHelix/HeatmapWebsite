@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Text;
 using System.IO;
+using System.Linq;
+using System.Collections.Generic;
 
 /*
  * https://github.com/mono/mono/blob/master/mcs/class/System.Web/System.Web/HttpRequest.cs
@@ -22,14 +24,14 @@ namespace FuckThisFuckingCGIFuck
 			public string ContentType;
 			public string Name;
 			public string Filename;
-			public long Start;
-			public long Length;
+			public byte[] Data;
+			public string AsText { get { return Encoding.ASCII.GetString(Data.Take(16).ToArray()); } }
+			public string Text { get { return Encoding.ASCII.GetString(Data); } }
 
-			public override string ToString ()
+			public override string ToString()
 			{
-				return "ContentType " + ContentType + ", Name " + Name + ", Filename " + Filename + ", Start " +
-					Start.ToString () + ", Length " + Length.ToString ();
-			}
+				return string.Format("Element: ContentType={0} Name={1} Filename={2} AsText={4} Data.Length={3}", ContentType, Name, Filename, Data.Length, AsText);
+			} 
 		}
 
 		Stream data;
@@ -53,7 +55,7 @@ namespace FuckThisFuckingCGIFuck
 		// After its boundary delimiter line, each body part then consists of a
 		// header area, a blank line, and a body area.  Thus a body part is
 		// similar to an RFC 822 message in syntax, but different in meaning.
-
+		/*
 		public HttpMultipart (Stream data, string b, Encoding encoding)
 		{
 			this.data = data;
@@ -62,13 +64,13 @@ namespace FuckThisFuckingCGIFuck
 			buffer = new byte [boundary_bytes.Length + 2]; // CRLF or '--'
 			this.encoding = encoding;
 			sb = new StringBuilder ();
-		}
+		}*/
 
 		public HttpMultipart (Stream data, string b, Encoding encoding, string lastElementName)
 		{
 			this.data = data;
 			boundary = b;
-			boundary_bytes = encoding.GetBytes (b);
+			boundary_bytes = encoding.GetBytes ("\r\n--" + b + "\r\n");
 			buffer = new byte [boundary_bytes.Length + 2]; // CRLF or '--'
 			this.encoding = encoding;
 			sb = new StringBuilder ();
@@ -135,7 +137,7 @@ namespace FuckThisFuckingCGIFuck
 			return encoding.GetString (source);
 		}
 
-		bool ReadBoundary ()
+		public bool ReadBoundary ()
 		{
 			try {
 				string line = ReadLine ();
@@ -170,7 +172,25 @@ namespace FuckThisFuckingCGIFuck
 			return true;
 		}
 
-		long MoveToNextBoundary (int maxlength)
+		byte[] MoveToNextBoundary(int maxlength)
+		{
+			var bytes = new List<byte>();
+			int matchLength = 0;
+			while (true) {
+				var x = data.ReadByte();
+				bytes.Add(checked((byte)x));
+				//Console.WriteLine("{0} {1}", x, (char)x);
+				if ((x < 0) || (bytes.Count > maxlength))
+					throw new Exception(String.Format("get your shit together " + bytes.Count));
+				if (x == boundary_bytes[matchLength]) {
+					if (++matchLength == boundary_bytes.Length)
+						return bytes.Take(bytes.Count - boundary_bytes.Length).ToArray();
+				} else
+					matchLength = 0;
+			}
+		}
+		/*
+		byte[] MoveToNextBoundary (int maxlength)
 		{
 			long retval = 0;
 			bool got_cr = false;
@@ -214,7 +234,7 @@ namespace FuckThisFuckingCGIFuck
 						state = 0;
 						data.Position = retval + 2;
 						if (got_cr) {
-							data.Position++;
+							data.ReadByte(); //data.Position++;
 							got_cr = false;
 						}
 						c = data.ReadByte ();
@@ -227,7 +247,7 @@ namespace FuckThisFuckingCGIFuck
 						state = 0;
 						data.Position = retval + 2;
 						if (got_cr) {
-							data.Position++;
+							data.ReadByte(); //data.Position++;
 							got_cr = false;
 						}
 						c = data.ReadByte ();
@@ -235,7 +255,8 @@ namespace FuckThisFuckingCGIFuck
 					}
 					data.Position = retval + 2;
 					if (got_cr)
-						data.Position++;
+						data.ReadByte();
+						//data.Position++;
 					break;
 				} else {
 					// state == 1
@@ -244,11 +265,11 @@ namespace FuckThisFuckingCGIFuck
 			}
 
 			return retval;
-		}
+		}*/
 
 		public Element ReadNextElement (int maxlength)
 		{
-			if (at_eof || ReadBoundary ())
+			if (at_eof/* || ReadBoundary ()*/)
 				return null;
 
 			Element elem = new Element ();
@@ -268,17 +289,16 @@ namespace FuckThisFuckingCGIFuck
 				}
 			}
 
-			long start = data.Position;
-			elem.Start = start;
-
 			if (stopDoNotMovePutYourHandsInTheAir)
 				return null;
 
-			long pos = MoveToNextBoundary (maxlength);
-			if (pos == -1)
-				return null;
+			//long pos = MoveToNextBoundary (maxlength);
+			//if (pos == -1)
+			//	return null;
+			//elem.Length = pos - start;
+			//Console.WriteLine("gonna do fancy stuff for {0}", elem.Name);
+			elem.Data = MoveToNextBoundary(maxlength);
 
-			elem.Length = pos - start;
 			return elem;
 		}
 
