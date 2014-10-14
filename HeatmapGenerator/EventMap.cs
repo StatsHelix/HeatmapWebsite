@@ -13,12 +13,12 @@ namespace HeatmapGenerator
 
 		static Color[] GenerateColorMap()
 		{
-			const int size = 6000;
+			const int size = 20000;
 			Color[] map = new Color[size];
 			for (int i = 0; i < size; i++) {
 				int of255 = (int)( i * ( 255.0 / size ) );
 
-				map[i] = Color.FromArgb(Math.Max(of255 - 50, 0), of255, 255 - of255, 100);
+				map[i] = Color.FromArgb(Math.Min(of255, 230), of255, 255-of255, 0);
 			}
 
 			return map;

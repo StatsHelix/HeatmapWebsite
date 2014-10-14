@@ -10,10 +10,10 @@ namespace HeatmapGenerator
 		public static void Main (string[] args)
 		{
 			Heatmap h = new Heatmap(
-				File.OpenRead("D:\\Users\\Moritz\\Desktop\\ESLOneCologne-GF-nip-vs-fnatic-inferno.dem"),
-				-2200,
-				4400,
-				5.9f);
+				File.OpenRead("D:\\Users\\Moritz\\Desktop\\VPiBP.dem"),
+				-2287,
+				3469,
+				5.5f);
 
 			Font f = new Font(FontFamily.GenericSansSerif, 20, FontStyle.Bold);
 			SolidBrush brush = new SolidBrush(Color.CornflowerBlue);
