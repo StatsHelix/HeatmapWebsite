@@ -26,6 +26,9 @@ namespace DemoInfo.ST
 
 		public void ParseStringTable(BitArrayStream reader, bool isUserInfo, DemoParser parser)
         {
+			if (isUserInfo)
+				parser.RawPlayers.Clear();
+
             int numStrings = (int)reader.ReadInt(16);
 
 
