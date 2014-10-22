@@ -31,7 +31,6 @@ namespace YoStrimmer
 
 			graphics.PreferredBackBufferWidth = 1024;
 			graphics.PreferredBackBufferHeight = 1024;
-			this.IsMouseVisible = true;
 			Content.RootDirectory = "Content";
 		}
 
@@ -56,6 +55,8 @@ namespace YoStrimmer
 		{
 			// Create a new SpriteBatch, which can be used to draw textures.
 			spriteBatch = new SpriteBatch(GraphicsDevice);
+			this.IsMouseVisible = true;
+			this.Window.AllowUserResizing = false;
 
 			DemoParser parser = new DemoParser(File.OpenRead("G:\\demoinfogo\\infe.dem"));
 			parser.ParseDemo(false);
