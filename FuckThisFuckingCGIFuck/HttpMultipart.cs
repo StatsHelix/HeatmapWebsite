@@ -268,9 +268,6 @@ namespace FuckThisFuckingCGIFuck
 
 		public Element ReadNextElement (int maxlength)
 		{
-			if (at_eof/* || ReadBoundary ()*/)
-				return null;
-
 			Element elem = new Element ();
 			string header;
 			bool stopDoNotMovePutYourHandsInTheAir = false;
