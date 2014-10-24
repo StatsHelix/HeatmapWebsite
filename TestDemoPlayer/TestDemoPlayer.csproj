@@ -37,7 +37,6 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -81,7 +80,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DemoInfo\DemoInfo.csproj">
+    <ProjectReference Include="..\demoinfo-public\DemoInfo\DemoInfo.csproj">
       <Project>{22D4CFC7-6810-4C18-A353-71A49782394F}</Project>
       <Name>DemoInfo</Name>
     </ProjectReference>

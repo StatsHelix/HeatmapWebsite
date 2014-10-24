@@ -37,8 +37,6 @@ namespace FuckThisFuckingCGIFuck
 		Stream data;
 		string boundary;
 		byte [] boundary_bytes;
-		byte [] buffer;
-		bool at_eof;
 		Encoding encoding;
 		StringBuilder sb;
 
@@ -71,7 +69,8 @@ namespace FuckThisFuckingCGIFuck
 			this.data = data;
 			boundary = b;
 			boundary_bytes = encoding.GetBytes ("\r\n--" + b + "\r\n");
-			buffer = new byte [boundary_bytes.Length + 2]; // CRLF or '--'
+			//Never read anyways. 
+			//buffer = new byte [boundary_bytes.Length + 2]; // CRLF or '--'
 			this.encoding = encoding;
 			sb = new StringBuilder ();
 			this.lastElementName = lastElementName;

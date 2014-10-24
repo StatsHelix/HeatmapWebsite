@@ -33,7 +33,7 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -48,7 +48,7 @@
       <Project>{B64108C4-7A5F-48A2-BEE2-CB25948036E9}</Project>
       <Name>HeatmapGenerator</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DemoInfo\DemoInfo.csproj">
+    <ProjectReference Include="..\demoinfo-public\DemoInfo\DemoInfo.csproj">
       <Project>{22D4CFC7-6810-4C18-A353-71A49782394F}</Project>
       <Name>DemoInfo</Name>
     </ProjectReference>

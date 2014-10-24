@@ -10,7 +10,7 @@ namespace HeatmapGenerator
 		public static void Main (string[] args)
 		{
 			Heatmap h = new Heatmap(
-				File.OpenRead("D:\\Users\\Moritz\\Desktop\\VPiBP.dem"),
+				File.OpenRead(""),
 				-2287,
 				3469,
 				5.5f);
