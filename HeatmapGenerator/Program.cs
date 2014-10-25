@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using Flai.Mongo;
 
 namespace HeatmapGenerator
 {
@@ -10,21 +11,14 @@ namespace HeatmapGenerator
 		public static void Main (string[] args)
 		{
 			Heatmap h = new Heatmap(
-				File.OpenRead(""),
-				-2287,
-				3469,
-				5.5f);
+				File.OpenRead("/home/moritz/Desktop/infe.dem"),
+				-2200,
+				4400,
+				5.9f);
 
-			Font f = new Font(FontFamily.GenericSansSerif, 20, FontStyle.Bold);
-			SolidBrush brush = new SolidBrush(Color.CornflowerBlue);
-			foreach(var dic in h.Parse())
-			{
-				Graphics g = Graphics.FromImage(dic.Value);
+			var result = h.Parse();
 
-				g.DrawString("Created with demo.ehvag.de", f, brush, 5, 5);
-
-				dic.Value.Save(dic.Key + ".png", ImageFormat.Png);
-			}
+			Database.Save<DemoAnalysis>(result);
 		}
 	}
 }

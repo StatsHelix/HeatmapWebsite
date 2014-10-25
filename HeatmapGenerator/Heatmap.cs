@@ -25,16 +25,20 @@ namespace HeatmapGenerator
 		EventMap TDeathPosition = new EventMap();
 		EventMap CTDeathPosition = new EventMap();
 
+		DemoAnalysis analysis = new DemoAnalysis();
+
+
+		RoundEventMap CurrentRound = new RoundEventMap();
+
 		Bitmap TPaths = new Bitmap(1024, 1024);
 		Bitmap CTPaths = new Bitmap(1024, 1024);
 		Graphics TPathsG, CTPathsG;
-
 
 		Bitmap TKills = new Bitmap(1024, 1024);
 		Bitmap CTKills = new Bitmap(1024, 1024);
 		Graphics TKillsG, CTKillsG;
 
-		float mapX, mapY, scale;
+		float mapX, mapY, scale; 
 
 		public Heatmap (Stream demo, float posX, float posY, float scale)
 		{
@@ -45,20 +49,75 @@ namespace HeatmapGenerator
 			CTKillsG = Graphics.FromImage(CTKills);
 
 
-			parser.MatchStarted += (object sender, MatchStartedEventArgs e) => {
-				parser.FlashNadeExploded += HandleFlashNadeExploded;
-				parser.SmokeNadeStarted += HandleSmokeNadeStarted;
-				parser.ExplosiveNadeExploded += HandleExplosiveNadeExploded;
-				parser.FireNadeStarted += HandleFireNadeStarted;
-				parser.PlayerKilled += HandlePlayerKilled;
-				parser.TickDone += HandleTickDone;
-			};
+			parser.FlashNadeExploded += HandleFlashNadeExploded;
+			parser.SmokeNadeStarted += HandleSmokeNadeStarted;
+			parser.ExplosiveNadeExploded += HandleExplosiveNadeExploded;
+			parser.FireNadeStarted += HandleFireNadeStarted;
+			parser.PlayerKilled += HandlePlayerKilled;
+			parser.TickDone += HandleTickDone;
+			parser.RoundStart += HandleRoundStart;
+
+			parser.MatchStarted += HandleMatchStarted;
 
 			this.mapX = posX;
 			this.mapY = posY;
 			this.scale = scale;
+   		}
+
+		void HandleMatchStarted (object sender, MatchStartedEventArgs e)
+		{
+			analysis.Participants.ForEach(a => {
+				a.Kills = 0;
+				a.Deaths = 0;
+			});
 		}
 
+		int roundNum = 0;
+		void HandleRoundStart (object sender, RoundStartedEventArgs e)
+		{
+			CurrentRound.Maps = new Dictionary<string, EventMap>() {
+				{ "TFlashes", 		TFlashes},
+				{ "CTFlashes", 		CTFlashes},
+				{ "CTSmokes",		CTSmokes },
+				{ "TSmokes", 		TSmokes },
+				{ "CTHEs", 			CTNades },
+				{ "THEs", 			TNades },
+				{ "BothTeamsFire", 	Fire},
+				{ "TKillOrigin", 	TKillOrigin},
+				{ "CTKillOrigin", 	CTKillOrigin},
+				{ "TDeathPosition", TDeathPosition },
+				{ "CTDeathPosition",CTDeathPosition },
+			};
+
+			CurrentRound.AddBitmap(Path.Combine(roundNum.ToString(), "TKills"), TKills);
+			CurrentRound.AddBitmap(Path.Combine(roundNum.ToString(), "CTKills"), CTKills);
+			CurrentRound.AddBitmap(Path.Combine(roundNum.ToString(), "TPaths"), TPaths);
+			CurrentRound.AddBitmap(Path.Combine(roundNum.ToString(), "CTPaths"), CTPaths);
+
+			analysis.Rounds.Add(CurrentRound);
+			CurrentRound = new RoundEventMap();
+			roundNum++;
+
+			TFlashes = new EventMap();
+			CTFlashes = new EventMap();
+			CTSmokes  = new EventMap();
+			TSmokes  = new EventMap();
+			CTNades  = new EventMap();
+			TNades  = new EventMap();
+			Fire = new EventMap();
+			TKillOrigin = new EventMap();
+			CTKillOrigin = new EventMap();
+			TDeathPosition = new EventMap();
+			CTDeathPosition  = new EventMap();
+
+
+
+			foreach (var player in parser.Players.Values) {
+				var p = GetParticipant(player);
+				p.Name = player.Name;
+				p.SteamID = player.SteamID;
+			}
+		}
 
 		SolidBrush TBrushSolid = new SolidBrush(Color.FromArgb(200, Color.OrangeRed));
 		SolidBrush CTBrushSolid = new SolidBrush(Color.FromArgb(200, Color.CornflowerBlue));
@@ -108,6 +167,9 @@ namespace HeatmapGenerator
 			g.DrawLine(new Pen(b, 1.5f), p1, p2);
 			g.FillEllipse(b, p1.X - 3, p1.Y - 3, 7, 7);
 			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+
+			GetParticipant(e.Killer).Kills++;
+			GetParticipant(e.DeathPerson).Deaths++;
 		}
 
 		void HandleFireNadeStarted (object sender, FireEventArgs e)
@@ -139,7 +201,6 @@ namespace HeatmapGenerator
 
 		void HandleFlashNadeExploded (object sender, FlashEventArgs e)
 		{
-
 			if (e.ThrownBy == null)
 				return;
 
@@ -149,28 +210,15 @@ namespace HeatmapGenerator
 				TFlashes.AddPoint(MapPoint(e.Position));
 		}
 
-		public Dictionary<string, Image> Parse()
+		public DemoAnalysis Parse()
 		{
 			parser.ParseDemo(true);
 
-			return new Dictionary<string, Image>() {
-				{ "TFlashes", TFlashes.Draw(1024, 1024) },
-				{ "CTFlashes", CTFlashes.Draw(1024, 1024) },
-				{ "CTSmokes", CTSmokes.Draw(1024, 1024) },
-				{ "TSmokes", TSmokes.Draw(1024, 1024) },
-				{ "CTHEs", CTNades.Draw(1024, 1024) },
-				{ "THEs", TNades.Draw(1024, 1024) },
-				{ "BothTeamsFire", Fire.Draw(1024, 1024) },
-				{ "TKillOrigin", TKillOrigin.Draw(1024, 1024) },
-				{ "CTKillOrigin", CTKillOrigin.Draw(1024, 1024) },
-				{ "TDeathPosition", TDeathPosition.Draw(1024, 1024) },
-				{ "CTDeathPosition", CTDeathPosition.Draw(1024, 1024) },
-				{ "TPaths", TPaths},
-				{ "CTPaths", CTPaths },
-				{ "TKills", TKills},
-				{ "CTKills", CTKills },
-			};
+			HandleRoundStart(null, new RoundStartedEventArgs());
 
+			analysis.Metadata = parser.Header;
+
+			return analysis;
 		}
 
 		public Point MapPoint(Vector vec)
@@ -179,6 +227,16 @@ namespace HeatmapGenerator
 				(int)((vec.X - mapX) / scale),
 				(int)((mapY - vec.Y) / scale)
 			);
+		}
+
+		private Participant GetParticipant(Player player)
+		{
+			var p = analysis.Participants.FirstOrDefault(a => a.IngameID == player.EntityID);
+
+			if (p == null)
+				analysis.Participants.Add( p = new Participant(player) );
+
+			return p;
 		}
 	}
 }
