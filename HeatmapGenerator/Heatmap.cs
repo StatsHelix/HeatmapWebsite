@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Collections.Generic;
 using System.Linq;
+using Flai.Mongo;
 
 namespace HeatmapGenerator
 {
@@ -40,7 +41,12 @@ namespace HeatmapGenerator
 
 		float mapX, mapY, scale; 
 
-		public Heatmap (Stream demo, float posX, float posY, float scale)
+		public Heatmap (Stream demo, float posX, float posY, float scale)  : this(demo, posX, posY, scale, new DemoAnalysis())
+		{
+
+   		}
+
+		public Heatmap (Stream demo, float posX, float posY, float scale, DemoAnalysis analysis)
 		{
 			parser = new DemoParser (demo);
 			TPathsG = Graphics.FromImage(TPaths);
@@ -62,7 +68,9 @@ namespace HeatmapGenerator
 			this.mapX = posX;
 			this.mapY = posY;
 			this.scale = scale;
-   		}
+
+			this.analysis = analysis;
+		}
 
 		void HandleMatchStarted (object sender, MatchStartedEventArgs e)
 		{
@@ -75,6 +83,12 @@ namespace HeatmapGenerator
 		int roundNum = 0;
 		void HandleRoundStart (object sender, RoundStartedEventArgs e)
 		{
+			foreach (var player in parser.Players.Values) {
+				var p = GetParticipant(player);
+				p.Name = player.Name;
+				p.SteamID = player.SteamID;
+			}
+
 			CurrentRound.Maps = new Dictionary<string, EventMap>() {
 				{ "TFlashes", 		TFlashes},
 				{ "CTFlashes", 		CTFlashes},
@@ -95,6 +109,13 @@ namespace HeatmapGenerator
 			CurrentRound.AddBitmap(Path.Combine(roundNum.ToString(), "CTPaths"), CTPaths);
 
 			analysis.Rounds.Add(CurrentRound);
+
+			if (!analysis.IsFinished) {
+				analysis.Progress = (double)parser.CurrrentTick / parser.Header.PlaybackTicks;
+			}
+
+			Database.Save(analysis);
+
 			CurrentRound = new RoundEventMap();
 			roundNum++;
 
@@ -109,14 +130,6 @@ namespace HeatmapGenerator
 			CTKillOrigin = new EventMap();
 			TDeathPosition = new EventMap();
 			CTDeathPosition  = new EventMap();
-
-
-
-			foreach (var player in parser.Players.Values) {
-				var p = GetParticipant(player);
-				p.Name = player.Name;
-				p.SteamID = player.SteamID;
-			}
 		}
 
 		SolidBrush TBrushSolid = new SolidBrush(Color.FromArgb(200, Color.OrangeRed));
@@ -142,8 +155,7 @@ namespace HeatmapGenerator
 				p.X -= 1;
 				p.Y -= 1;
 
-				g.FillRectangle(b, new Rectangle(p, rectSize));
-
+				g.FillRectangle(b, new Rectangle(p.ToPoint(), rectSize));
 			}
 		}
 
@@ -162,7 +174,7 @@ namespace HeatmapGenerator
 			Graphics g = e.Killer.Team == Team.CounterTerrorist ? CTKillsG : TKillsG;
 			Brush b = e.Killer.Team == Team.CounterTerrorist ? CTBrushSolid : TBrushSolid;
 
-			Point p1 = MapPoint(e.Killer.Position), p2 = MapPoint(e.DeathPerson.Position);
+			Point p1 = MapPoint(e.Killer.Position).ToPoint(), p2 = MapPoint(e.DeathPerson.Position).ToPoint();
 			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 			g.DrawLine(new Pen(b, 1.5f), p1, p2);
 			g.FillEllipse(b, p1.X - 3, p1.Y - 3, 7, 7);
@@ -221,9 +233,33 @@ namespace HeatmapGenerator
 			return analysis;
 		}
 
-		public Point MapPoint(Vector vec)
+		public DemoAnalysis ParseHeaderOnly()
 		{
-			return new Point(
+			parser.ParseDemo(false);
+
+			analysis.Metadata = parser.Header;
+
+			return analysis;
+		}
+
+		public DemoAnalysis ParseTheRest()
+		{
+			analysis.Metadata = parser.Header;
+
+			while (parser.ParseNextTick());
+
+			analysis.IsFinished = true;
+			analysis.Progress = 1.0;
+
+			HandleRoundStart(null, new RoundStartedEventArgs());
+
+			return analysis;
+		}
+
+
+		public Vector2 MapPoint(Vector vec)
+		{
+			return new Vector2(
 				(int)((vec.X - mapX) / scale),
 				(int)((mapY - vec.Y) / scale)
 			);

@@ -15,8 +15,10 @@ namespace Flai.Mongo
 {
 	public static class Database
 	{
+		[ThreadStatic]
 		private static MongoDatabase database = null;
 
+		[ThreadStatic]
 		private static string DBName;
 
 		private static MongoDatabase GetDatabase()
@@ -79,6 +81,17 @@ namespace Flai.Mongo
 			return GetCollection<T>().FindOneByIdAs<T>(id);
 		}
 
+		public static T LoadByObjectID<T>(string objectID)
+		{
+			return GetCollection<T>().FindOneByIdAs<T>(new BsonObjectId(objectID));
+		}
+
+
+		public static T LoadBy<T>(string field, BsonValue value)
+		{
+			return GetCollection<T>().FindOneAs<T>(new QueryDocument(field, value));
+		}
+
 		public static T Load<T>(IMongoQuery query)
 		{
 			return GetCollection<T>().FindOneAs<T>(query);
@@ -90,14 +103,34 @@ namespace Flai.Mongo
 			collection.Save(t);
 		}
 
-		public static BsonValue StoreFile(Stream stream, string fileName)
+		public static void Save(object t)
 		{
-			return GetDatabase().GridFS.Upload(stream, fileName).Id;
+			var collection = GetCollection(t.GetType());
+			collection.Save(t);
+		}
+
+		public static void StoreFile(Stream stream, string fileName, string ContentType)
+		{
+			MongoGridFSCreateOptions options = new MongoGridFSCreateOptions();
+			options.ContentType = ContentType;
+			GetDatabase().GridFS.Upload(stream, fileName, options);
+		}
+
+		public static void StoreFile(Stream stream, string fileName)
+		{
+			StoreFile(stream, fileName, "application/octet-stream");
+		}
+
+		public static Stream StoreStream(string fileName, string ContentType)
+		{
+			MongoGridFSCreateOptions options = new MongoGridFSCreateOptions();
+			options.ContentType = ContentType;
+			return GetDatabase().GridFS.OpenWrite(fileName);
 		}
 
 		public static Stream StoreStream(string fileName)
 		{
-			return GetDatabase().GridFS.OpenWrite(fileName);
+			return StoreStream(fileName, "application/octet-stream");
 		}
 
 		public static Stream RetrieveFile(string fileName)
@@ -105,9 +138,31 @@ namespace Flai.Mongo
 			return GetDatabase().GridFS.FindOne(fileName).OpenRead();
 		}
 
+		public static long GetFileSize(string fileName)
+		{
+			return GetDatabase().GridFS.FindOne(fileName).Length;
+		}
+
+		public static string GetFileType(string fileName)
+		{
+			return GetDatabase().GridFS.FindOne(fileName).ContentType;
+		}
+
+		public static bool FileExists(string fileName)
+		{
+			return GetDatabase().GridFS.FindOne(fileName) != null;
+		}
+
 		public static string GetFileName(BsonValue ID)
 		{
 			return GetDatabase().GridFS.FindOneById(ID).Name;
+		}
+
+		public static string GetFilenameByHash(string md5)
+		{
+			var f = GetDatabase().GridFS.FindOne(new QueryDocument("md5", md5));
+
+			return f == null ? null : f.Name;
 		}
 
 	}

@@ -7,6 +7,11 @@ using System.Collections.Concurrent;
 using HeatmapGenerator;
 using Newtonsoft.Json;
 using System.Globalization;
+using Flai.Mongo;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.IO;
+using System.Text;
 
 namespace FuckThisFuckingCGIFuck
 {
@@ -59,23 +64,44 @@ namespace FuckThisFuckingCGIFuck
 		private static string MULTIPART_PREFIX = "multipart/form-data; boundary=";
 		static void HandleRequest(HttpListenerContext context)
 		{
-			bool watermark = false;
-
 			var req = context.Request;
+			context.Response.ContentType = "application/json";
+			context.Response.KeepAlive = false;
+
+			#if DEBUG
+			context.Response.AddHeader("Access-Control-Allow-Origin", "*");
+			#endif
+
+
+			switch (req.Url.AbsolutePath) {
+			case "/upload":
+				HandleDemoUpload(context, req);
+				break;
+			case "/file":
+				HandleFile(context, req);
+				break;
+			case "/fileExists":
+				HandleFileExists(context, req);
+				break;
+
+			case "/analysis":
+				HandleAnalysis(context, req);
+				break;
+			default:
+				Handle404(context, req);
+				break;
+			}
+		}
+
+		static void HandleDemoUpload(HttpListenerContext context, HttpListenerRequest req)
+		{
 			var multipart = new HttpMultipart(req.InputStream, req.ContentType.Substring(MULTIPART_PREFIX.Length), req.ContentEncoding, "demo");
 			multipart.ReadBoundary();
 			var eMapImage = multipart.ReadNextElement(5 * 1024 * 1024);
 			var ePosX = multipart.ReadNextElement(256);
 			var ePosY = multipart.ReadNextElement(256);
 			var eScale = multipart.ReadNextElement(256);
-			var eWatermark = multipart.ReadNextElement(256);
-			if (eWatermark != null) {
-				if (eWatermark.Name != "watermark")
-					throw new Exception("ewatermark invalid");
-				watermark = true;
-			}
 			// else no watermark checked, demo is now
-
 			var eDemo = multipart.ReadNextElement(256);
 			// shall be null
 			if (eMapImage.Name != "map")
@@ -114,28 +140,121 @@ namespace FuckThisFuckingCGIFuck
 			}
 			float posX, posY, scale;
 			if (Single.TryParse(ePosX.Text, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out posX) && Single.TryParse(ePosY.Text, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out posY) && Single.TryParse(eScale.Text, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out scale)) {
-				var requestId = Guid.NewGuid().ToString();
-				var basepath = Path.Combine("/usr/share/nginx/www-demo/static/results", requestId);
-				Directory.CreateDirectory(basepath);
-				var files = new Heatmap(req.InputStream, posX, posY, scale).Parse();
-				foreach (var item in files) {
-					if (watermark) {
-						Font f = new Font(FontFamily.GenericSansSerif, 20, FontStyle.Bold);
-						SolidBrush brush = new SolidBrush(Color.CornflowerBlue);
-						Graphics g = Graphics.FromImage(item.Value);
-						g.DrawString("Created with demo.ehvag.de", f, brush, 5, 5);
-					}
-					item.Value.Save(Path.Combine(basepath, item.Key + ".png"), System.Drawing.Imaging.ImageFormat.Png);
-				}
-				map.Save(Path.Combine(basepath, "map.png"), System.Drawing.Imaging.ImageFormat.Png);
+				var demoFileName = Guid.NewGuid().ToString() + ".dem";
+				Database.StoreFile(req.InputStream, demoFileName);
+				var s = Database.RetrieveFile(demoFileName);
+				Heatmap h = new Heatmap(s, posX, posY, scale);
+				var ana = h.ParseHeaderOnly();
+				ana.DemoFile = demoFileName;
+				Database.Save(ana);
 				writer.WriteLine(JsonConvert.SerializeObject(new {
 					result = "success",
-					id = requestId
+					id = ana.ID
 				}));
 				context.Response.Close();
+				h.ParseTheRest();
 			}
 			else
 				throw new Exception("invalid form data (posx, posy or scale) ");
+		}
+
+		static void HandleFile(HttpListenerContext context, HttpListenerRequest req)
+		{
+			if (req.QueryString["path"] != null && !Database.FileExists(req.QueryString["path"])) {
+				Write404("db://" + req.QueryString["path"], context, req);
+				return;
+			}
+
+			context.Response.ContentType = Database.GetFileType(req.QueryString["path"]);
+			context.Response.ContentLength64 = Database.GetFileSize(req.QueryString["path"]);
+
+			Database.RetrieveFile(req.QueryString["path"]).CopyTo(context.Response.OutputStream);
+
+			context.Response.OutputStream.Flush();
+
+			context.Response.Close();
+		}
+
+		static void HandleFileExists(HttpListenerContext context, HttpListenerRequest req)
+		{
+			var writer = new StreamWriter(context.Response.OutputStream);
+
+			string resultFile = Database.GetFilenameByHash(context.Request.QueryString["md5"]);
+			var analysis = Database.LoadBy<DemoAnalysis>("DemoFile", resultFile);
+
+			if(resultFile == null)
+			{
+				writer.WriteLine(JsonConvert.SerializeObject(new {
+					result = "notFound",
+				}));
+			}
+			else
+			{
+				if (analysis == null) {
+					writer.WriteLine(JsonConvert.SerializeObject(new {
+						result = "found",
+						fileName = resultFile
+				}));
+				} else {
+					writer.WriteLine(JsonConvert.SerializeObject(new {
+						result = "found",
+						fileName = resultFile,
+						analysisResult = analysis
+					}));
+				}
+			}
+
+
+			writer.Flush();
+			context.Response.Close();
+		}
+
+		#if DEBUG
+		static JsonWriterSettings jsonSettings = new JsonWriterSettings(false, Encoding.UTF8, GuidRepresentation.Standard, true, " ", Environment.NewLine, JsonOutputMode.Strict, null);
+		#else
+		static JsonWriterSettings jsonSettings = new JsonWriterSettings(false, Encoding.UTF8, GuidRepresentation.Standard, false, "", "", JsonOutputMode.Strict, null);
+		#endif
+		static void HandleAnalysis(HttpListenerContext context, HttpListenerRequest req)
+		{
+			if (req.QueryString["id"] == null) {
+				Write404("analysis://[no analysis given]", context, req);
+				return;
+			}
+
+			var analysis = Database.LoadByObjectID<DemoAnalysis>(req.QueryString["id"]).ToBsonDocument();
+			analysis.Remove("DemoFile");
+
+			if (analysis == null) {
+				Write404("analysis://" + req.QueryString["id"], context, req);
+			} else {
+				var writer = new StreamWriter(context.Response.OutputStream);
+				writer.Write(analysis.ToJson(jsonSettings));
+				writer.Flush();
+				context.Response.Close();
+			}
+		}
+
+
+		static void Handle404(HttpListenerContext context, HttpListenerRequest req)
+		{
+			Write404(req.RawUrl, context, req);
+		}
+
+		static void Write404(string fileName, HttpListenerContext context, HttpListenerRequest req)
+		{
+			var writer = new StreamWriter(context.Response.OutputStream);
+			context.Response.StatusCode = 404;
+
+			writer.WriteLine(JsonConvert.SerializeObject(new {
+				result = "error",
+				error = new {
+					HTTPError = 404,
+					Message = "Page \""+fileName+"\" not found"
+				}
+			}));
+
+			writer.Flush();
+			context.Response.Close();
 		}
 	}
 }
