@@ -7,7 +7,7 @@ namespace HeatmapGenerator
 {
 	public class EventMap
 	{
-		public List<Point> Points { get; private set; }
+		public List<Vector2> Points { get; private set; }
 
 		static readonly Color[] ColorMapping = GenerateColorMap();
 
@@ -26,15 +26,15 @@ namespace HeatmapGenerator
 
 		public EventMap()
 		{
-			Points = new List<Point> ();
+			Points = new List<Vector2> ();
 		}
 
-		public EventMap(List<Point> points)
+		public EventMap(List<Vector2> points)
 		{
 			this.Points = points;
 		}
 
-		public void AddPoint(Point p)
+		public void AddPoint(Vector2 p)
 		{
 			Points.Add (p);
 		}
@@ -62,7 +62,7 @@ namespace HeatmapGenerator
 			return Points.Sum (a => Math.Max (2000 - DistanceSquared (x, y, a), 0));
 		}
 
-		private int DistanceSquared(int x, int y, Point p)
+		private int DistanceSquared(int x, int y, Vector2 p)
 		{
 			return ( x - p.X ) * ( x - p.X ) + ( y - p.Y ) * ( y - p.Y );
 		}
