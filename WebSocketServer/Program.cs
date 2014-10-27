@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using ActuallyWorkingWebSockets;
+using HeatmapGenerator;
 
 namespace WSS
 {
@@ -44,9 +45,22 @@ namespace WSS
 						var context = await getContext;
 						// got context, upload starts
 						await session.SendObject(new { Status = "ReadyForUpload" });
-						//var uploadStream = await session.ReceiveBinaryMessage().WithTimeout(ClientReadTimeout);
-						var response = await clientQuery.WithTimeout(ClientReadTimeout);
-						Console.WriteLine("Got upload: {0}", response.Status);
+						var uploadInfo = await clientQuery.WithTimeout(ClientReadTimeout);
+						var uploadStream = await session.ReceiveBinaryMessage().WithTimeout(ClientReadTimeout);
+
+						var demoFileName = Guid.NewGuid().ToString() + ".dem";
+						context.Database.StoreFile(uploadStream, demoFileName);
+						var s = context.Database.RetrieveFile(demoFileName);
+						Heatmap h = new Heatmap(s, uploadInfo.posX, uploadInfo.posY, uploadInfo.scale);
+						var ana = h.ParseHeaderOnly();
+						ana.DemoFile = demoFileName;
+						context.Database.Save(ana);
+						await session.SendObject(new {
+							Status = "Success",
+							Id = ana.ID
+						});
+						h.ParseTheRest();
+
 						await session.SendObject(new { Status = "UploadComplete" });
 						break;
 					} else if (completed == clientQuery)
