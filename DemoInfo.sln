@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeatmapGenerator", "Heatmap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FuckThisFuckingCGIFuck", "FuckThisFuckingCGIFuck\FuckThisFuckingCGIFuck.csproj", "{9F98902F-3DAD-47FE-ACB9-FEEEB5DCAD59}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActuallyWorkingWebSockets", "ActuallyWorkingWebSockets\ActuallyWorkingWebSockets\ActuallyWorkingWebSockets.csproj", "{B099DD77-A799-43B7-9E59-EB769309290D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSocketServer", "WebSocketServer\WebSocketServer.csproj", "{DC227D8B-9357-4C7E-93C4-DE5704832CD6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +29,10 @@ Global
 		{9F98902F-3DAD-47FE-ACB9-FEEEB5DCAD59}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F98902F-3DAD-47FE-ACB9-FEEEB5DCAD59}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F98902F-3DAD-47FE-ACB9-FEEEB5DCAD59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B099DD77-A799-43B7-9E59-EB769309290D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B099DD77-A799-43B7-9E59-EB769309290D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B099DD77-A799-43B7-9E59-EB769309290D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B099DD77-A799-43B7-9E59-EB769309290D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B64108C4-7A5F-48A2-BEE2-CB25948036E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B64108C4-7A5F-48A2-BEE2-CB25948036E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B64108C4-7A5F-48A2-BEE2-CB25948036E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -33,9 +41,13 @@ Global
 		{D726A3C4-C9C0-46EB-A6DE-84482E316945}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D726A3C4-C9C0-46EB-A6DE-84482E316945}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D726A3C4-C9C0-46EB-A6DE-84482E316945}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC227D8B-9357-4C7E-93C4-DE5704832CD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC227D8B-9357-4C7E-93C4-DE5704832CD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC227D8B-9357-4C7E-93C4-DE5704832CD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC227D8B-9357-4C7E-93C4-DE5704832CD6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = FuckThisFuckingCGIFuck\FuckThisFuckingCGIFuck.csproj
+		StartupItem = WebSocketServer\WebSocketServer.csproj
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
