@@ -48,6 +48,7 @@
     <Compile Include="JsonMessages.cs" />
     <Compile Include="TaskTimeout.cs" />
     <Compile Include="Database.cs" />
+    <Compile Include="TeeStream.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
