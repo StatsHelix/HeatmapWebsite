@@ -70,9 +70,9 @@ namespace WSS
 						throw new System.IO.InvalidDataException("protocol violation");
 					else {
 						// timeout, quick ping
-						Debug.WriteLine("ping", session.GetHashCode().ToString());
 						await session.Ping().WithTimeout(ClientReadTimeout);
-						Debug.WriteLine("pong", session.GetHashCode().ToString());
+						// still there. send them their current position.
+						await session.SendObject(new { Status = "InQueue", QueuePosition = ticket.QueuePosition });
 					}
 				}
 			}
