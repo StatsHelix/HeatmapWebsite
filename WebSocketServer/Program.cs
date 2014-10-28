@@ -15,12 +15,14 @@ namespace WSS
 	{
 		private static readonly int Slots = 3; // this is where we can tweak
 		private static UploadQueue q;
+		private static IDatastore Database;
 
 		public static void Main(string[] args)
 		{
+			Database = new MongoDatastore("we should probably put something here");
 			var contexts = new List<UploadWorkerContext>(Slots);
 			for (int i = 0; i < Slots; i++)
-				contexts.Add(new UploadWorkerContext { Database = new MongoDatastore("we should probably put something here")  });
+				contexts.Add(new UploadWorkerContext { });
 			q = new UploadQueue(contexts);
 
 			var server = new WebSocketServer(
@@ -50,12 +52,12 @@ namespace WSS
 						var uploadStream = await session.ReceiveBinaryMessage().WithTimeout(ClientReadTimeout);
 
 						var demoFileName = Guid.NewGuid().ToString() + ".dem";
-						var dbStoreStream = context.Database.StoreStream(demoFileName);
+						var dbStoreStream = Database.StoreStream(demoFileName);
 						var tee = new TeeStream(uploadStream, dbStoreStream); // upload to db WHILE PARSING :D
-						var h = new Heatmap(context.Database, tee, uploadInfo.posX, uploadInfo.posY, uploadInfo.scale);
+						var h = new Heatmap(Database, tee, uploadInfo.posX, uploadInfo.posY, uploadInfo.scale);
 						var ana = h.ParseHeaderOnly();
 						ana.DemoFile = demoFileName;
-						context.Database.Save(ana);
+						Database.Save(ana);
 						await session.SendObject(new {
 							Status = "Success",
 							Id = ana.ID
