@@ -5,11 +5,15 @@ using System.Threading.Tasks;
 
 namespace WSS
 {
-	public class TeeStream : Stream
+	public class TeeAndProgressStream : Stream
 	{
 		private readonly Stream Underlying, Additional;
 
-		public TeeStream(Stream underlying, Stream additional)
+		private static readonly long FeedbackThreshold;
+		private long _Position = 1024 * 1024; // 1 MB
+		public event Action<long> OnProgress;
+
+		public TeeAndProgressStream(Stream underlying, Stream additional)
 		{
 			if (!underlying.CanRead)
 				throw new ArgumentException("underlying cant read wtf m8");
@@ -20,6 +24,15 @@ namespace WSS
 			Additional = additional;
 		}
 
+		private void Advance(long howMuch)
+		{
+			var offset = _Position % FeedbackThreshold;
+			_Position += howMuch;
+
+			if (((offset + howMuch) >= FeedbackThreshold) && (OnProgress != null))
+				OnProgress(_Position);
+		}
+
 		public override void Flush()
 		{
 			Additional.Flush();
@@ -28,6 +41,7 @@ namespace WSS
 		public override int Read(byte[] buffer, int offset, int count)
 		{
 			int ret = Underlying.Read(buffer, offset, count);
+			Advance(ret);
 			Additional.Write(buffer, offset, ret);
 			return ret;
 		}
@@ -35,14 +49,17 @@ namespace WSS
 		public override int ReadByte()
 		{
 			var b = Underlying.ReadByte();
-			if (b != -1)
+			if (b != -1) {
 				Additional.WriteByte(checked((byte)b));
+				Advance(1);
+			}
 			return b;
 		}
 
 		public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
 			int ret = await Underlying.ReadAsync(buffer, offset, count, cancellationToken);
+			Advance(ret);
 			await Additional.WriteAsync(buffer, offset, ret, cancellationToken);
 			return ret;
 		}
@@ -67,6 +84,7 @@ namespace WSS
 			var mar = (MyAsyncResult)ar.AsyncState;
 			int ret = Underlying.EndRead(ar);
 			mar.ReturnValue = ret;
+			Advance(ret);
 			Additional.BeginWrite(mar.Buffer, mar.Offset, ret, HandleWriteCallback, mar);
 		}
 
@@ -129,7 +147,7 @@ namespace WSS
 		public override long Length { get { return Underlying.Length; } }
 		public override bool CanTimeout { get { return Underlying.CanTimeout; } }
 		public override long Position {
-			get { throw new NotSupportedException(); }
+			get { return _Position; }
 			set { throw new NotSupportedException(); }
 		}
 		public override int ReadTimeout {
