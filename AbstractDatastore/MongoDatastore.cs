@@ -86,6 +86,11 @@ namespace AbstractDatastore
 			return GetCollection<T>().FindOneAs<T>(new QueryDocument(field, value));
 		}
 
+		T IDatastore.LoadBy<T>(string field, string value)
+		{
+			return this.LoadBy<T>(field, value);
+		}
+
 		public T Load<T>(IMongoQuery query)
 		{
 			return GetCollection<T>().FindOneAs<T>(query);
