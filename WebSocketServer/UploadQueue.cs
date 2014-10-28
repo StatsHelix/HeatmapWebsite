@@ -12,6 +12,7 @@ namespace WSS
 			private readonly Task<UploadWorkerContext> ContextTask;
 			private readonly Action<Ticket> OnDispose;
 			internal UploadWorkerContext Context;
+			public int QueuePosition { get; set; }
 
 			private Ticket(Action<Ticket> onDispose)
 			{
@@ -58,10 +59,19 @@ namespace WSS
 					return new Ticket(DisposeTicket, AvailableContexts.Dequeue());
 				else {
 					var ticket = new Ticket(DisposeTicket, new TaskCompletionSource<UploadWorkerContext>());
+					ticket.QueuePosition = Queue.Count;
 					Queue.AddLast(ticket);
 					return ticket;
 				}
 			}
+		}
+
+		private void RenumberTickets()
+		{
+			int i = 1;
+			lock (this)
+				foreach (var ticket in Queue)
+					ticket.QueuePosition = i++;
 		}
 
 		private void DisposeTicket(Ticket ticket)
@@ -69,6 +79,7 @@ namespace WSS
 			lock (this) {
 				if (ticket.Context == null) {
 					Queue.Remove(ticket);
+					RenumberTickets();
 					ticket.CompletionSource.SetCanceled();
 				} else {
 					GiveBackContext(ticket.Context);
@@ -87,6 +98,7 @@ namespace WSS
 					} else {
 						ticket = Queue.First.Value;
 						Queue.RemoveFirst();
+						RenumberTickets();
 					}
 				} while (!ticket.CompletionSource.TrySetResult(context));
 				ticket.Context = context; // just in case they're not waiting RIGHT NOW
