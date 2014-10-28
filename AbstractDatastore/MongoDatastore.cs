@@ -105,9 +105,7 @@ namespace AbstractDatastore
 
 		public void StoreFile(Stream stream, string fileName, string ContentType)
 		{
-			MongoGridFSCreateOptions options = new MongoGridFSCreateOptions();
-			options.ContentType = ContentType;
-			database.GridFS.Upload(stream, fileName, options);
+			database.GridFS.Upload(stream, fileName, new MongoGridFSCreateOptions { ContentType = ContentType });
 		}
 
 		public void StoreFile(Stream stream, string fileName)
@@ -117,9 +115,7 @@ namespace AbstractDatastore
 
 		public Stream StoreStream(string fileName, string ContentType)
 		{
-			MongoGridFSCreateOptions options = new MongoGridFSCreateOptions();
-			options.ContentType = ContentType;
-			return database.GridFS.OpenWrite(fileName);
+			return database.GridFS.OpenWrite(fileName, new MongoGridFSCreateOptions { ContentType = ContentType });
 		}
 
 		public Stream StoreStream(string fileName)
