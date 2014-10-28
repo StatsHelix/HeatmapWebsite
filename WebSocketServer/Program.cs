@@ -48,8 +48,7 @@ namespace WSS
 		}
 
 		private static async Task HandleUploadRequest(WebSocketSession session, dynamic request) {
-			var preUploadInfo = await session.ReceiveObject().WithTimeout(ClientReadTimeout);
-			var alreadyUploaded = Database.GetFilenameByHash(preUploadInfo.MD5 as string);
+			var alreadyUploaded = Database.GetFilenameByHash(request.MD5 as string);
 			if (alreadyUploaded != null) {
 				var analysis = Database.LoadBy<DemoAnalysis>("DemoFile", alreadyUploaded);
 				await session.SendObject(new {
