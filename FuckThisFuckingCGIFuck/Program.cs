@@ -4,23 +4,28 @@ using System.IO;
 using System.Drawing;
 using System.Threading;
 using System.Collections.Concurrent;
+using System.Reflection;
 using HeatmapGenerator;
 using Newtonsoft.Json;
 using System.Globalization;
-using Flai.Mongo;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.IO;
 using System.Text;
+using AbstractDatastore;
 
 namespace FuckThisFuckingCGIFuck
 {
 	class MainClass
 	{
+		private static MongoDatastore Database;
+
 		// singlethreaded for rate limiting
 		// it's not a bug, it's a feature!!!!!!!!1111111oneoneoneeleven #believe
 		public static void Main(string[] args)
 		{
+			Database = new MongoDatastore(Assembly.GetEntryAssembly().GetName().Name);
+
 			var listener = new HttpListener();
 			listener.Prefixes.Add("http://localhost:5500/");
 			listener.Start();
@@ -143,7 +148,7 @@ namespace FuckThisFuckingCGIFuck
 				var demoFileName = Guid.NewGuid().ToString() + ".dem";
 				Database.StoreFile(req.InputStream, demoFileName);
 				var s = Database.RetrieveFile(demoFileName);
-				Heatmap h = new Heatmap(s, posX, posY, scale);
+				Heatmap h = new Heatmap(Database, s, posX, posY, scale);
 				var ana = h.ParseHeaderOnly();
 				ana.DemoFile = demoFileName;
 				Database.Save(ana);

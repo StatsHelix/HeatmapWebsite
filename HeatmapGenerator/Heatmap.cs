@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Collections.Generic;
 using System.Linq;
-using Flai.Mongo;
+using AbstractDatastore;
 
 namespace HeatmapGenerator
 {
@@ -28,9 +28,6 @@ namespace HeatmapGenerator
 
 		DemoAnalysis analysis = new DemoAnalysis();
 
-
-		RoundEventMap CurrentRound = new RoundEventMap();
-
 		Bitmap TPaths = new Bitmap(1024, 1024);
 		Bitmap CTPaths = new Bitmap(1024, 1024);
 		Graphics TPathsG, CTPathsG;
@@ -39,14 +36,16 @@ namespace HeatmapGenerator
 		Bitmap CTKills = new Bitmap(1024, 1024);
 		Graphics TKillsG, CTKillsG;
 
-		float mapX, mapY, scale; 
+		float mapX, mapY, scale;
 
-		public Heatmap (Stream demo, float posX, float posY, float scale)  : this(demo, posX, posY, scale, new DemoAnalysis())
+		private readonly IDatastore Datastore;
+
+		public Heatmap (IDatastore datastore, Stream demo, float posX, float posY, float scale)  : this(datastore, demo, posX, posY, scale, new DemoAnalysis())
 		{
 
    		}
 
-		public Heatmap (Stream demo, float posX, float posY, float scale, DemoAnalysis analysis)
+		public Heatmap (IDatastore datastore, Stream demo, float posX, float posY, float scale, DemoAnalysis analysis)
 		{
 			parser = new DemoParser (demo);
 			TPathsG = Graphics.FromImage(TPaths);
@@ -70,6 +69,8 @@ namespace HeatmapGenerator
 			this.scale = scale;
 
 			this.analysis = analysis;
+
+			this.Datastore = datastore;
 		}
 
 		void HandleMatchStarted (object sender, MatchStartedEventArgs e)
@@ -89,6 +90,7 @@ namespace HeatmapGenerator
 				p.SteamID = player.SteamID;
 			}
 
+			var CurrentRound = new RoundEventMap(Datastore);
 			CurrentRound.Maps = new Dictionary<string, EventMap>() {
 				{ "TFlashes", 		TFlashes},
 				{ "CTFlashes", 		CTFlashes},
@@ -114,9 +116,8 @@ namespace HeatmapGenerator
 				analysis.Progress = (double)parser.CurrrentTick / parser.Header.PlaybackTicks;
 			}
 
-			Database.Save(analysis);
+			Datastore.Save(analysis);
 
-			CurrentRound = new RoundEventMap();
 			roundNum++;
 
 			TFlashes = new EventMap();

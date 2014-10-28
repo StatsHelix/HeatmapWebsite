@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using MongoDB.Bson;
-using Flai.Mongo;
 using System.IO;
 using DemoInfo;
 

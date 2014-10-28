@@ -10,13 +10,23 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Reflection;
+using AbstractDatastore;
 
-namespace WSS
+namespace AbstractDatastore
 {
-	public class Database
+	public class MongoDatastore : IDatastore
 	{
-		private readonly MongoDatabase database = new MongoClient().GetServer()
-			.GetDatabase(Assembly.GetEntryAssembly().GetName().Name);
+		private readonly MongoDatabase database;
+
+		public MongoDatastore(string name)
+			: this(new MongoClient().GetServer().GetDatabase(name))
+		{
+		}
+
+		public MongoDatastore(MongoDatabase database)
+		{
+			this.database = database;
+		}
 
 		public int GetNextValueFromSequence(string sequenceName)
 		{

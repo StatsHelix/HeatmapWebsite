@@ -59,6 +59,10 @@
       <Project>{22D4CFC7-6810-4C18-A353-71A49782394F}</Project>
       <Name>DemoInfo</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AbstractDatastore\AbstractDatastore.csproj">
+      <Project>{A54C844F-AFF0-479E-8644-EDB697A33E4D}</Project>
+      <Name>AbstractDatastore</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
