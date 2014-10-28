@@ -73,7 +73,8 @@ namespace WSS
 
 						var demoFileName = Guid.NewGuid().ToString() + ".dem";
 						var dbStoreStream = Database.StoreStream(demoFileName);
-						var tee = new TeeStream(uploadStream, dbStoreStream); // upload to db WHILE PARSING :D
+						var tee = new TeeAndProgressStream(uploadStream, dbStoreStream); // upload to db WHILE PARSING :D
+						tee.OnProgress += async (pos) => await session.SendObject(new { Status = "UploadProgress", Position = pos });
 						var h = new Heatmap(Database, tee, uploadInfo.posX, uploadInfo.posY, uploadInfo.scale);
 						var ana = h.ParseHeaderOnly();
 						ana.DemoFile = demoFileName;
