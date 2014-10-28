@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+
+using AbstractDatastore;
 using ActuallyWorkingWebSockets;
 using HeatmapGenerator;
 
@@ -18,7 +20,7 @@ namespace WSS
 		{
 			var contexts = new List<UploadWorkerContext>(Slots);
 			for (int i = 0; i < Slots; i++)
-				contexts.Add(new UploadWorkerContext());
+				contexts.Add(new UploadWorkerContext { Database = new MongoDatastore("we should probably put something here")  });
 			q = new UploadQueue(contexts);
 
 			var server = new WebSocketServer(
@@ -32,7 +34,6 @@ namespace WSS
 		private static readonly TimeSpan ClientReadTimeout = TimeSpan.FromSeconds(1);
 		private static async Task HandleClient(WebSocketSession session)
 		{
-			await session.SendTextMessage("ohai");
 			Console.WriteLine("Upload request, getting ticket: {0}", await session.ReceiveTextMessage());
 			using (var ticket = q.EnterQueue()) {
 				var getContext = ticket.GetContext();
@@ -49,9 +50,9 @@ namespace WSS
 						var uploadStream = await session.ReceiveBinaryMessage().WithTimeout(ClientReadTimeout);
 
 						var demoFileName = Guid.NewGuid().ToString() + ".dem";
-						context.Database.StoreFile(uploadStream, demoFileName);
-						var s = context.Database.RetrieveFile(demoFileName);
-						Heatmap h = new Heatmap(s, uploadInfo.posX, uploadInfo.posY, uploadInfo.scale);
+						var dbStoreStream = context.Database.StoreStream(demoFileName);
+						var tee = new TeeStream(uploadStream, dbStoreStream); // upload to db WHILE PARSING :D
+						var h = new Heatmap(context.Database, tee, uploadInfo.posX, uploadInfo.posY, uploadInfo.scale);
 						var ana = h.ParseHeaderOnly();
 						ana.DemoFile = demoFileName;
 						context.Database.Save(ana);

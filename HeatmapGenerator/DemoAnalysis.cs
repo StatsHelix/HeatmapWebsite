@@ -4,6 +4,7 @@ using System.IO;
 using DemoInfo;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using AbstractDatastore;
 
 namespace HeatmapGenerator
 {
@@ -29,9 +30,9 @@ namespace HeatmapGenerator
 			this.Uploaded = DateTime.UtcNow;
 		}
 
-		public static DemoAnalysis Create(Stream DemoStream, float posX, float posY, float scale)
+		public static DemoAnalysis Create(IDatastore datastore, Stream DemoStream, float posX, float posY, float scale)
 		{
-			Heatmap h = new Heatmap(DemoStream, posX, posY, scale);
+			Heatmap h = new Heatmap(datastore, DemoStream, posX, posY, scale);
 
 
 			return h.Parse();

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using MongoDB.Bson;
-using Flai.Mongo;
+using AbstractDatastore;
 using System.IO;
 using DemoInfo;
 
@@ -17,8 +17,12 @@ namespace HeatmapGenerator
 
 		public string Directory = Path.GetRandomFileName();
 
-		public RoundEventMap()
+		private readonly IDatastore Datastore;
+
+		public RoundEventMap(IDatastore datastore)
 		{
+			Datastore = datastore;
+
 			Maps = new Dictionary<string, EventMap>();
 			Bitmaps = new Dictionary<string, string>();
 			Participants = new List<Participant>();
@@ -28,9 +32,8 @@ namespace HeatmapGenerator
 		{
 			string fileName = Path.Combine(Directory, name + ".png");
 
-			var stream = Database.StoreStream(fileName, "image/png");
-			image.Save(stream, ImageFormat.Png);
-			stream.Close();
+			using (var stream = Datastore.StoreStream(fileName, "image/png"))
+				image.Save(stream, ImageFormat.Png);
 
 			Bitmaps.Add(name, fileName);
 		}

@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using Flai.Mongo;
+using System.Reflection;
 
 namespace HeatmapGenerator
 {
@@ -10,7 +10,8 @@ namespace HeatmapGenerator
 	{
 		public static void Main (string[] args)
 		{
-			Heatmap h = new Heatmap(
+			var Database = new AbstractDatastore.MongoDatastore(Assembly.GetEntryAssembly().GetName().Name);
+			Heatmap h = new Heatmap(Database,
 				File.OpenRead("/home/moritz/Desktop/infe.dem"),
 				-2200,
 				4400,

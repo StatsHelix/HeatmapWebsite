@@ -1,15 +1,11 @@
 ﻿using System;
+using AbstractDatastore;
 
 namespace WSS
 {
 	public class UploadWorkerContext
 	{
-		public Database Database { get; private set; }
-
-		public UploadWorkerContext()
-		{
-			Database = new Database();
-		}
+		public IDatastore Database { get; set; }
 	}
 }
 
