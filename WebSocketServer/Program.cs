@@ -20,6 +20,7 @@ namespace WSS
 		public static void Main(string[] args)
 		{
 			Database = new MongoDatastore("we should probably put something here");
+
 			var contexts = new List<UploadWorkerContext>(Slots);
 			for (int i = 0; i < Slots; i++)
 				contexts.Add(new UploadWorkerContext { });
@@ -33,10 +34,30 @@ namespace WSS
 			serverTask.Wait();
 		}
 
+		private static readonly Dictionary<string, Func<WebSocketSession, dynamic, Task>> RequestHandlers =
+			new Dictionary<string, Func<WebSocketSession, dynamic, Task>> {
+			{ "UploadDemo", HandleUploadRequest },
+		};
 		private static readonly TimeSpan ClientReadTimeout = TimeSpan.FromSeconds(1);
 		private static async Task HandleClient(WebSocketSession session)
 		{
-			Console.WriteLine("Upload request, getting ticket: {0}", await session.ReceiveTextMessage());
+			while (true) {
+				var request = await session.ReceiveObject().WithTimeout(ClientReadTimeout);
+				await RequestHandlers[request.Status as string](session, request);
+			}
+		}
+
+		private static async Task HandleUploadRequest(WebSocketSession session, dynamic request) {
+			var preUploadInfo = await session.ReceiveObject().WithTimeout(ClientReadTimeout);
+			var alreadyUploaded = Database.GetFilenameByHash(preUploadInfo.MD5 as string);
+			if (alreadyUploaded != null) {
+				var analysis = Database.LoadBy<DemoAnalysis>("DemoFile", alreadyUploaded);
+				await session.SendObject(new {
+					Status = "AlreadyUploaded",
+					Id = analysis.ID,
+				});
+			}
+
 			using (var ticket = q.EnterQueue()) {
 				var getContext = ticket.GetContext();
 				var clientQuery = session.ReceiveObject();
@@ -59,7 +80,7 @@ namespace WSS
 						ana.DemoFile = demoFileName;
 						Database.Save(ana);
 						await session.SendObject(new {
-							Status = "Success",
+							Status = "AnalysisStarted",
 							Id = ana.ID
 						});
 						h.ParseTheRest();
