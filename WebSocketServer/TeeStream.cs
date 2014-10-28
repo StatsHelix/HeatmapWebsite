@@ -11,6 +11,11 @@ namespace WSS
 
 		public TeeStream(Stream underlying, Stream additional)
 		{
+			if (!underlying.CanRead)
+				throw new ArgumentException("underlying cant read wtf m8");
+			if (!additional.CanWrite)
+				throw new ArgumentException("additional cant write wtf m8");
+
 			Underlying = underlying;
 			Additional = additional;
 		}
