@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSocketServer", "WebSocke
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbstractDatastore", "AbstractDatastore\AbstractDatastore.csproj", "{A54C844F-AFF0-479E-8644-EDB697A33E4D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyslogTrace", "SyslogTrace\SyslogTrace\SyslogTrace.csproj", "{5CD6D7D9-BA6C-4633-9009-85108694A03A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{22D4CFC7-6810-4C18-A353-71A49782394F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22D4CFC7-6810-4C18-A353-71A49782394F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22D4CFC7-6810-4C18-A353-71A49782394F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CD6D7D9-BA6C-4633-9009-85108694A03A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CD6D7D9-BA6C-4633-9009-85108694A03A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CD6D7D9-BA6C-4633-9009-85108694A03A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CD6D7D9-BA6C-4633-9009-85108694A03A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9F98902F-3DAD-47FE-ACB9-FEEEB5DCAD59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9F98902F-3DAD-47FE-ACB9-FEEEB5DCAD59}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F98902F-3DAD-47FE-ACB9-FEEEB5DCAD59}.Release|Any CPU.ActiveCfg = Release|Any CPU

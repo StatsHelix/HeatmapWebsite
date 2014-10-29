@@ -4,3 +4,6 @@
 [submodule "ActuallyWorkingWebSockets"]
 	path = ActuallyWorkingWebSockets
 	url = https://github.com/main--/ActuallyWorkingWebSockets
+[submodule "SyslogTrace"]
+	path = SyslogTrace
+	url = https://github.com/main--/SyslogTrace.git
