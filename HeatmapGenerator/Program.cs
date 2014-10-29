@@ -12,12 +12,10 @@ namespace HeatmapGenerator
 		{
 			var Database = new AbstractDatastore.MongoDatastore(Assembly.GetEntryAssembly().GetName().Name);
 			Heatmap h = new Heatmap(Database,
-				File.OpenRead("/home/moritz/Desktop/infe.dem"),
-				-2200,
-				4400,
-				5.9f);
+				File.OpenRead("/home/moritz/Desktop/infe.dem"));
 
-			var result = h.Parse();
+			h.ParseHeaderOnly();
+			var result = h.ParseTheRest();
 
 			Database.Save<DemoAnalysis>(result);
 		}

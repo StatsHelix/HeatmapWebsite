@@ -40,6 +40,9 @@ namespace HeatmapGenerator
 
 		private readonly IDatastore Datastore;
 
+		public Heatmap (IDatastore datastore, Stream demo) : this(datastore, demo, new DemoAnalysis())
+		{ }
+
 		public Heatmap (IDatastore datastore, Stream demo, DemoAnalysis analysis)
 		{
 			parser = new DemoParser (demo);

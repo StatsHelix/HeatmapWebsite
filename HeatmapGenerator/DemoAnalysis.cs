@@ -29,14 +29,6 @@ namespace HeatmapGenerator
 			Rounds = new List<RoundEventMap>();
 			this.Uploaded = DateTime.UtcNow;
 		}
-
-		public static DemoAnalysis Create(IDatastore datastore, Stream DemoStream, float posX, float posY, float scale)
-		{
-			Heatmap h = new Heatmap(datastore, DemoStream, posX, posY, scale);
-
-
-			return h.Parse();
-		}
 	}
 }
 

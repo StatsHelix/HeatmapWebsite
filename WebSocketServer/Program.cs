@@ -79,7 +79,7 @@ namespace WSS
 						var dbStoreStream = Database.StoreStream(demoFileName);
 						var tee = new TeeAndProgressStream(uploadStream, dbStoreStream); // upload to db WHILE PARSING :D
 						tee.OnProgress += async (pos) => await session.SendObject(new { Status = "UploadProgress", Position = pos });
-						var h = new Heatmap(Database, tee, uploadInfo.posX, uploadInfo.posY, uploadInfo.scale);
+						var h = new Heatmap(Database, tee);
 						var ana = h.ParseHeaderOnly();
 						ana.DemoFile = demoFileName;
 						Database.Save(ana);
