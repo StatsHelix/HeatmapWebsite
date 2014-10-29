@@ -77,6 +77,11 @@ namespace FuckThisFuckingCGIFuck
 			context.Response.AddHeader("Access-Control-Allow-Origin", "*");
 			#endif
 
+			if (req.HttpMethod == "OPTIONS")
+			{
+				context.Response.Close();
+				return;
+			}
 
 			switch (req.Url.AbsolutePath) {
 			case "/upload":
