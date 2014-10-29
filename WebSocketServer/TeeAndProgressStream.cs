@@ -9,8 +9,8 @@ namespace WSS
 	{
 		private readonly Stream Underlying, Additional;
 
-		private static readonly long FeedbackThreshold;
-		private long _Position = 1024 * 1024; // 1 MB
+		private static readonly long FeedbackThreshold = 1024 * 1024; // 1 MB
+		private long _Position;
 		public event Action<long> OnProgress;
 
 		public TeeAndProgressStream(Stream underlying, Stream additional)
