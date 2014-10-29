@@ -40,12 +40,7 @@ namespace HeatmapGenerator
 
 		private readonly IDatastore Datastore;
 
-		public Heatmap (IDatastore datastore, Stream demo, float posX, float posY, float scale)  : this(datastore, demo, posX, posY, scale, new DemoAnalysis())
-		{
-
-   		}
-
-		public Heatmap (IDatastore datastore, Stream demo, float posX, float posY, float scale, DemoAnalysis analysis)
+		public Heatmap (IDatastore datastore, Stream demo, DemoAnalysis analysis)
 		{
 			parser = new DemoParser (demo);
 			TPathsG = Graphics.FromImage(TPaths);
@@ -63,10 +58,6 @@ namespace HeatmapGenerator
 			parser.RoundStart += HandleRoundStart;
 
 			parser.MatchStarted += HandleMatchStarted;
-
-			this.mapX = posX;
-			this.mapY = posY;
-			this.scale = scale;
 
 			this.analysis = analysis;
 
@@ -105,10 +96,10 @@ namespace HeatmapGenerator
 				{ "CTDeathPosition",CTDeathPosition },
 			};
 
-			CurrentRound.AddBitmap(Path.Combine(roundNum.ToString(), "TKills"), TKills);
-			CurrentRound.AddBitmap(Path.Combine(roundNum.ToString(), "CTKills"), CTKills);
-			CurrentRound.AddBitmap(Path.Combine(roundNum.ToString(), "TPaths"), TPaths);
-			CurrentRound.AddBitmap(Path.Combine(roundNum.ToString(), "CTPaths"), CTPaths);
+			CurrentRound.AddBitmap("TKills", TKills);
+			CurrentRound.AddBitmap("CTKills", CTKills);
+			CurrentRound.AddBitmap("TPaths", TPaths);
+			CurrentRound.AddBitmap("CTPaths", CTPaths);
 
 			analysis.Rounds.Add(CurrentRound);
 
@@ -223,24 +214,38 @@ namespace HeatmapGenerator
 				TFlashes.AddPoint(MapPoint(e.Position));
 		}
 
-		public DemoAnalysis Parse()
-		{
-			parser.ParseDemo(true);
-
-			HandleRoundStart(null, new RoundStartedEventArgs());
-
-			analysis.Metadata = parser.Header;
-
-			return analysis;
-		}
-
 		public DemoAnalysis ParseHeaderOnly()
 		{
 			parser.ParseDemo(false);
 
 			analysis.Metadata = parser.Header;
+			SetCoordinates(analysis.Metadata.MapName);
 
 			return analysis;
+		}
+
+		private void SetCoordinates(string mapName)
+		{
+			string[] lines = File.ReadAllLines(Path.Combine("maps", mapName + ".txt"));
+
+			foreach(string line in lines)
+			{
+				var data = line.Split('"');
+
+				if(data[1] == "pos_x")
+				{
+					this.mapX = float.Parse(data[3]);
+				}
+				else if(data[1] == "pos_y")
+				{
+					this.mapY = float.Parse(data[3]);
+				}
+				else if (data[1] == "scale")
+				{
+					this.scale = float.Parse(data[3]);
+				}
+
+			}
 		}
 
 		public DemoAnalysis ParseTheRest()
