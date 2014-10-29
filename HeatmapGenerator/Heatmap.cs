@@ -235,19 +235,22 @@ namespace HeatmapGenerator
 			{
 				var data = line.Split('"');
 
-				if(data[1] == "pos_x")
+				if (data.Length > 2)
 				{
-					this.mapX = float.Parse(data[3]);
-				}
-				else if(data[1] == "pos_y")
-				{
-					this.mapY = float.Parse(data[3]);
-				}
-				else if (data[1] == "scale")
-				{
-					this.scale = float.Parse(data[3]);
-				}
 
+					if (data[1] == "pos_x")
+					{
+						this.mapX = float.Parse(data[3]);
+					}
+					else if (data[1] == "pos_y")
+					{
+						this.mapY = float.Parse(data[3]);
+					}
+					else if (data[1] == "scale")
+					{
+						this.scale = float.Parse(data[3]);
+					}
+				}
 			}
 		}
 
