@@ -23,7 +23,7 @@ namespace WSS
 			Trace.Listeners.Add(new SyslogTrace.SyslogTraceListener("CSGO-A: WSS"));
 			#endif
 
-			Database = new MongoDatastore("we should probably put something here");
+			Database = new MongoDatastore("DemoInfo");
 
 			var contexts = new List<UploadWorkerContext>(Slots);
 			for (int i = 0; i < Slots; i++)
