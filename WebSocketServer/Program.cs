@@ -49,12 +49,12 @@ namespace WSS
 		{
 			while (true) {
 				var request = await session.ReceiveObject().WithTimeout(ClientReadTimeout);
-				await RequestHandlers[request.Status as string](session, request);
+				await RequestHandlers[(string)request.Status](session, request);
 			}
 		}
 
 		private static async Task HandleUploadRequest(WebSocketSession session, dynamic request) {
-			var alreadyUploaded = Database.GetFilenameByHash(request.MD5 as string);
+			var alreadyUploaded = Database.GetFilenameByHash((string)request.MD5);
 			if (alreadyUploaded != null) {
 				var analysis = Database.LoadBy<DemoAnalysis>("DemoFile", alreadyUploaded);
 				await session.SendObject(new {
