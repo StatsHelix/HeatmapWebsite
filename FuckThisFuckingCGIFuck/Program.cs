@@ -113,9 +113,7 @@ namespace FuckThisFuckingCGIFuck
 			context.Response.ContentType = "application/json";
 			var writer = new StreamWriter(context.Response.OutputStream);
 			writer.AutoFlush = true;
-			Image map;
 
-			float posX, posY, scale;
 			var demoFileName = Guid.NewGuid().ToString() + ".dem";
 			Database.StoreFile(req.InputStream, demoFileName);
 			var s = Database.RetrieveFile(demoFileName);
@@ -184,9 +182,9 @@ namespace FuckThisFuckingCGIFuck
 		}
 
 		#if DEBUG
-		static JsonWriterSettings jsonSettings = new JsonWriterSettings(false, Encoding.UTF8, GuidRepresentation.Standard, true, " ", Environment.NewLine, JsonOutputMode.Strict, null);
+		static JsonWriterSettings jsonSettings = new JsonWriterSettings { CloseOutput = false, GuidRepresentation = GuidRepresentation.Standard, Indent = true, IndentChars = " ", NewLineChars = Environment.NewLine, OutputMode = JsonOutputMode.Strict };
 		#else
-		static JsonWriterSettings jsonSettings = new JsonWriterSettings(false, Encoding.UTF8, GuidRepresentation.Standard, false, "", "", JsonOutputMode.Strict, null);
+		static JsonWriterSettings jsonSettings = new JsonWriterSettings { CloseOutput = false, GuidRepresentation = GuidRepresentation.Standard, Indent = false, IndentChars = "", NewLineChars = "", OutputMode = JsonOutputMode.Strict };
 		#endif
 		static void HandleAnalysis(HttpListenerContext context, HttpListenerRequest req)
 		{
@@ -201,7 +199,7 @@ namespace FuckThisFuckingCGIFuck
 			if (analysis == null) {
 				Write404("analysis://" + req.QueryString["id"], context, req);
 			} else {
-				var writer = new StreamWriter(context.Response.OutputStream);
+				var writer = new StreamWriter(context.Response.OutputStream, Encoding.UTF8);
 				writer.Write(analysis.ToJson(jsonSettings));
 				writer.Flush();
 				context.Response.Close();

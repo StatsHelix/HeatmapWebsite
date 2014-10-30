@@ -73,10 +73,10 @@ namespace WSS
 					var completed = await Task.WhenAny(getContext, clientQuery,
 						Task.Delay(TimeSpan.FromSeconds(5)));
 					if (completed == getContext) {
-						var context = await getContext;
+						await getContext; // possible future use
 						// got context, upload starts
 						await session.SendObject(new { Status = "ReadyForUpload" });
-						var uploadInfo = await clientQuery.WithTimeout(ClientReadTimeout);
+						await clientQuery.WithTimeout(ClientReadTimeout); // possible future use
 						Debug.WriteLine("omfg getting stream now");
 						var uploadStream = await session.ReceiveBinaryMessage().WithTimeout(ClientReadTimeout);
 						Debug.WriteLine("SHIT SHIT SHIT GOT THE STREAM EVERYTHING IS AWESOME");
