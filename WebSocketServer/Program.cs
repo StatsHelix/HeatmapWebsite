@@ -62,6 +62,7 @@ namespace WSS
 					Status = "AlreadyUploaded",
 					Id = analysis.ID,
 				});
+				return;
 			}
 
 			using (var ticket = q.EnterQueue()) {
