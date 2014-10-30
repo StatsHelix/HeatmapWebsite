@@ -21,6 +21,8 @@ namespace WSS
 		{
 			#if !DEBUG
 			Trace.Listeners.Add(new SyslogTrace.SyslogTraceListener("CSGO-A: WSS"));
+			#else
+			Trace.Listeners.Add(new ConsoleTraceListener(true));
 			#endif
 
 			Database = new MongoDatastore("DemoInfo");
