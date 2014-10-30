@@ -49,6 +49,7 @@ namespace WSS
 		{
 			while (true) {
 				var request = await session.ReceiveObject().WithTimeout(ClientReadTimeout);
+				Debug.WriteLine(request, "HandleClient: received request");
 				await RequestHandlers[(string)request.Status](session, request);
 			}
 		}
@@ -75,7 +76,9 @@ namespace WSS
 						// got context, upload starts
 						await session.SendObject(new { Status = "ReadyForUpload" });
 						var uploadInfo = await clientQuery.WithTimeout(ClientReadTimeout);
+						Debug.WriteLine("omfg getting stream now");
 						var uploadStream = await session.ReceiveBinaryMessage().WithTimeout(ClientReadTimeout);
+						Debug.WriteLine("SHIT SHIT SHIT GOT THE STREAM EVERYTHING IS AWESOME");
 
 						var demoFileName = Guid.NewGuid().ToString() + ".dem";
 						var dbStoreStream = Database.StoreStream(demoFileName);
