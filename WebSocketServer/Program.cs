@@ -82,18 +82,19 @@ namespace WSS
 						Debug.WriteLine("SHIT SHIT SHIT GOT THE STREAM EVERYTHING IS AWESOME");
 
 						var demoFileName = Guid.NewGuid().ToString() + ".dem";
-						var dbStoreStream = Database.StoreStream(demoFileName);
-						var tee = new TeeAndProgressStream(uploadStream, dbStoreStream); // upload to db WHILE PARSING :D
-						tee.OnProgress += async (pos) => await session.SendObject(new { Status = "UploadProgress", Position = pos });
-						var h = new Heatmap(Database, tee);
-						var ana = h.ParseHeaderOnly();
-						ana.DemoFile = demoFileName;
-						Database.Save(ana);
-						await session.SendObject(new {
-							Status = "AnalysisStarted",
-							Id = ana.ID
-						});
-						h.ParseTheRest();
+						using (var dbStoreStream = Database.StoreStream(demoFileName)) {
+							var tee = new TeeAndProgressStream(uploadStream, dbStoreStream); // upload to db WHILE PARSING :D
+							tee.OnProgress += async (pos) => await session.SendObject(new { Status = "UploadProgress", Position = pos });
+							var h = new Heatmap(Database, tee);
+							var ana = h.ParseHeaderOnly();
+							ana.DemoFile = demoFileName;
+							Database.Save(ana);
+							await session.SendObject(new {
+								Status = "AnalysisStarted",
+								Id = ana.ID
+							});
+							h.ParseTheRest();
+						}
 
 						await session.SendObject(new { Status = "UploadComplete" });
 						break;
