@@ -47,6 +47,7 @@
     <Compile Include="Participant.cs" />
     <Compile Include="DemoAnalysis.cs" />
     <Compile Include="Vector2.cs" />
+    <Compile Include="Overview.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

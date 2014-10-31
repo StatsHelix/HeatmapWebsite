@@ -27,7 +27,7 @@ namespace HeatmapGenerator
 		EventMap TDeathPosition = new EventMap();
 		EventMap CTDeathPosition = new EventMap();
 
-		DemoAnalysis analysis = new DemoAnalysis();
+		DemoAnalysis analysis;
 
 		Bitmap TPaths = new Bitmap(1024, 1024);
 		Bitmap CTPaths = new Bitmap(1024, 1024);
@@ -43,17 +43,16 @@ namespace HeatmapGenerator
 
 		public event Action<DemoAnalysis> OnRoundAnalysisFinished;
 
-		public Heatmap (IDatastore datastore, Stream demo) : this(datastore, demo, new DemoAnalysis())
+		public Heatmap (IDatastore datastore, Stream demo, Overview overview) : this(datastore, demo, overview, new DemoAnalysis())
 		{ }
 
-		public Heatmap (IDatastore datastore, Stream demo, DemoAnalysis analysis)
+		public Heatmap (IDatastore datastore, Stream demo, Overview overview, DemoAnalysis analysis)
 		{
 			parser = new DemoParser (demo);
 			TPathsG = Graphics.FromImage(TPaths);
 			CTPathsG = Graphics.FromImage(CTPaths);
 			TKillsG = Graphics.FromImage(TKills);
 			CTKillsG = Graphics.FromImage(CTKills);
-
 
 			parser.FlashNadeExploded += HandleFlashNadeExploded;
 			parser.SmokeNadeStarted += HandleSmokeNadeStarted;
@@ -66,6 +65,7 @@ namespace HeatmapGenerator
 			parser.MatchStarted += HandleMatchStarted;
 
 			this.analysis = analysis;
+			this.analysis.Overview = overview;
 
 			this.Datastore = datastore;
 		}

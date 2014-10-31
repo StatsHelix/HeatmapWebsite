@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
+using MongoDB.Bson.Serialization;
 
 using AbstractDatastore;
 using ActuallyWorkingWebSockets;
@@ -71,7 +72,7 @@ namespace WSS
 
 			using (var ticket = q.EnterQueue()) {
 				var getContext = ticket.GetContext();
-				var clientQuery = session.ReceiveObject();
+				var clientQuery = session.ReceiveTextMessage();
 
 				while (true) {
 					var completed = await Task.WhenAny(getContext, clientQuery,
@@ -80,7 +81,14 @@ namespace WSS
 						await getContext; // possible future use
 						// got context, upload starts
 						await session.SendObject(new { Status = "ReadyForUpload" });
-						await clientQuery.WithTimeout(ClientReadTimeout); // possible future use
+						var uploadInfo = BsonDocument.Parse(await clientQuery.WithTimeout(ClientReadTimeout));
+						Overview overview;
+						if (uploadInfo["Status"] == "CustomMap")
+							overview = BsonSerializer.Deserialize<Overview>(uploadInfo["Overview"].AsBsonDocument);
+						else if (uploadInfo["Status"] == "DefaultMap")
+							overview = null;
+						else
+							throw new NotImplementedException();
 						Debug.WriteLine("omfg getting stream now");
 						var uploadStream = await session.ReceiveBinaryMessage().WithTimeout(ClientReadTimeout);
 						Debug.WriteLine("SHIT SHIT SHIT GOT THE STREAM EVERYTHING IS AWESOME");
@@ -88,7 +96,7 @@ namespace WSS
 						var demoFileName = Guid.NewGuid().ToString() + ".dem";
 						using (var dbStoreStream = Database.StoreStream(demoFileName))
 						using (var tee = new DoubleBufferedTeeStream(uploadStream, dbStoreStream)) { // upload to db WHILE PARSING :D
-							var h = new Heatmap(Database, tee);
+							var h = new Heatmap(Database, tee, overview);
 							h.OnRoundAnalysisFinished += async (analysis) => {
 								var doc = new BsonDocument();
 								doc["Status"] = "AnalysisProgress";

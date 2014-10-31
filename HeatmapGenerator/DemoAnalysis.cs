@@ -23,6 +23,8 @@ namespace HeatmapGenerator
 		public bool IsFinished { get; set; }
 		public DateTime Uploaded { get; set; }
 
+		public Overview Overview { get; set; }
+
 		public DemoAnalysis()
 		{
 			Participants = new List<Participant>();
