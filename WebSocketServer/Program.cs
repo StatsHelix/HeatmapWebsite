@@ -52,7 +52,7 @@ namespace WSS
 		{
 			while (true) {
 				var request = await session.ReceiveObject().WithTimeout(ClientReadTimeout);
-				Debug.WriteLine(request, "HandleClient: received request");
+				Debug.WriteLine(((object)request).ToString(), "HandleClient: received request");
 				await RequestHandlers[(string)request.Status](session, request);
 			}
 		}
