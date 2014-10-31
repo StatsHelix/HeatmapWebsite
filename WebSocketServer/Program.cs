@@ -86,8 +86,8 @@ namespace WSS
 						Debug.WriteLine("SHIT SHIT SHIT GOT THE STREAM EVERYTHING IS AWESOME");
 
 						var demoFileName = Guid.NewGuid().ToString() + ".dem";
-						using (var dbStoreStream = Database.StoreStream(demoFileName)) {
-							var tee = new TeeStream(uploadStream, dbStoreStream); // upload to db WHILE PARSING :D
+						using (var dbStoreStream = Database.StoreStream(demoFileName))
+						using (var tee = new DoubleBufferedTeeStream(uploadStream, dbStoreStream)) { // upload to db WHILE PARSING :D
 							var h = new Heatmap(Database, tee);
 							h.OnRoundAnalysisFinished += async (analysis) => {
 								var doc = new BsonDocument();
