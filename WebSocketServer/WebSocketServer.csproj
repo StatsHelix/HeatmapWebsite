@@ -47,7 +47,7 @@
     <Compile Include="UploadWorkerContext.cs" />
     <Compile Include="JsonMessages.cs" />
     <Compile Include="TaskTimeout.cs" />
-    <Compile Include="TeeAndProgressStream.cs" />
+    <Compile Include="TeeStream.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
