@@ -62,10 +62,10 @@ namespace WSS
 			var alreadyUploaded = Database.GetFilenameByHash((string)request.MD5);
 			if (alreadyUploaded != null) {
 				var analysis = Database.LoadBy<DemoAnalysis>("DemoFile", alreadyUploaded);
-				await session.SendObject(new {
-					Status = "AlreadyUploaded",
-					Id = analysis.ID,
-				});
+				var doc = new BsonDocument();
+				doc["Status"] = "AlreadyUploaded";
+				doc["Analysis"] = analysis.ToBsonDocument();
+				await session.SendTextMessage(doc.ToJson(MongoJsonSettings));
 				return;
 			}
 
