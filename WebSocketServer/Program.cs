@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
+using MongoDB.Bson;
+using MongoDB.Bson.IO;
+
 using AbstractDatastore;
 using ActuallyWorkingWebSockets;
 using HeatmapGenerator;
@@ -54,6 +57,7 @@ namespace WSS
 			}
 		}
 
+		private static readonly JsonWriterSettings MongoJsonSettings = new JsonWriterSettings { OutputMode = JsonOutputMode.Strict };
 		private static async Task HandleUploadRequest(WebSocketSession session, dynamic request) {
 			var alreadyUploaded = Database.GetFilenameByHash((string)request.MD5);
 			if (alreadyUploaded != null) {
@@ -86,6 +90,12 @@ namespace WSS
 							var tee = new TeeAndProgressStream(uploadStream, dbStoreStream); // upload to db WHILE PARSING :D
 							tee.OnProgress += async (pos) => await session.SendObject(new { Status = "UploadProgress", Position = pos });
 							var h = new Heatmap(Database, tee);
+							h.OnRoundAnalysisFinished += async (analysis) => {
+								var doc = new BsonDocument();
+								doc["Status"] = "AnalysisProgress";
+								doc["Analysis"] = analysis.ToBsonDocument();
+								await session.SendTextMessage(doc.ToJson(MongoJsonSettings));
+							};
 							var ana = h.ParseHeaderOnly();
 							ana.DemoFile = demoFileName;
 							Database.Save(ana);

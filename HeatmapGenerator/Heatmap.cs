@@ -40,6 +40,8 @@ namespace HeatmapGenerator
 
 		private readonly IDatastore Datastore;
 
+		public event Action<DemoAnalysis> OnRoundAnalysisFinished;
+
 		public Heatmap (IDatastore datastore, Stream demo) : this(datastore, demo, new DemoAnalysis())
 		{ }
 
@@ -110,6 +112,8 @@ namespace HeatmapGenerator
 				analysis.Progress = (double)parser.CurrrentTick / parser.Header.PlaybackTicks;
 			}
 
+			if (OnRoundAnalysisFinished != null)
+				OnRoundAnalysisFinished(analysis);
 			Datastore.Save(analysis);
 
 			roundNum++;
