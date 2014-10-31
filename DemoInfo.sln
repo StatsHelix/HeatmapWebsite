@@ -3,19 +3,27 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoInfo", "demoinfo-public\DemoInfo\DemoInfo.csproj", "{22D4CFC7-6810-4C18-A353-71A49782394F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestDemoPlayer", "TestDemoPlayer\TestDemoPlayer.csproj", "{D726A3C4-C9C0-46EB-A6DE-84482E316945}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeatmapGenerator", "HeatmapGenerator\HeatmapGenerator.csproj", "{B64108C4-7A5F-48A2-BEE2-CB25948036E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "Testing\Testing.csproj", "{0C808595-B442-47FD-95CE-CFD48EDFA823}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FuckThisFuckingCGIFuck", "FuckThisFuckingCGIFuck\FuckThisFuckingCGIFuck.csproj", "{9F98902F-3DAD-47FE-ACB9-FEEEB5DCAD59}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActuallyWorkingWebSockets", "ActuallyWorkingWebSockets\ActuallyWorkingWebSockets\ActuallyWorkingWebSockets.csproj", "{B099DD77-A799-43B7-9E59-EB769309290D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontend", "Frontend", "{90A454E3-1DE5-4A90-B154-31A3F2C84CD5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSocketServer", "WebSocketServer\WebSocketServer.csproj", "{DC227D8B-9357-4C7E-93C4-DE5704832CD6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FuckThisFuckingCGIFuck", "FuckThisFuckingCGIFuck\FuckThisFuckingCGIFuck.csproj", "{9F98902F-3DAD-47FE-ACB9-FEEEB5DCAD59}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{E8FF2E71-1873-4CCD-98F9-59A378EE37F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DemoInfo", "demoinfo-public\DemoInfo\DemoInfo.csproj", "{22D4CFC7-6810-4C18-A353-71A49782394F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeatmapGenerator", "HeatmapGenerator\HeatmapGenerator.csproj", "{B64108C4-7A5F-48A2-BEE2-CB25948036E9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utility libs", "Utility libs", "{394DF799-BF67-4707-A90B-E3372E0B2715}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbstractDatastore", "AbstractDatastore\AbstractDatastore.csproj", "{A54C844F-AFF0-479E-8644-EDB697A33E4D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActuallyWorkingWebSockets", "ActuallyWorkingWebSockets\ActuallyWorkingWebSockets\ActuallyWorkingWebSockets.csproj", "{B099DD77-A799-43B7-9E59-EB769309290D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyslogTrace", "SyslogTrace\SyslogTrace\SyslogTrace.csproj", "{5CD6D7D9-BA6C-4633-9009-85108694A03A}"
 EndProject
@@ -25,6 +33,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0C808595-B442-47FD-95CE-CFD48EDFA823}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C808595-B442-47FD-95CE-CFD48EDFA823}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C808595-B442-47FD-95CE-CFD48EDFA823}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C808595-B442-47FD-95CE-CFD48EDFA823}.Release|Any CPU.Build.0 = Release|Any CPU
 		{22D4CFC7-6810-4C18-A353-71A49782394F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{22D4CFC7-6810-4C18-A353-71A49782394F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22D4CFC7-6810-4C18-A353-71A49782394F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -57,6 +69,15 @@ Global
 		{DC227D8B-9357-4C7E-93C4-DE5704832CD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC227D8B-9357-4C7E-93C4-DE5704832CD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC227D8B-9357-4C7E-93C4-DE5704832CD6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DC227D8B-9357-4C7E-93C4-DE5704832CD6} = {90A454E3-1DE5-4A90-B154-31A3F2C84CD5}
+		{9F98902F-3DAD-47FE-ACB9-FEEEB5DCAD59} = {90A454E3-1DE5-4A90-B154-31A3F2C84CD5}
+		{22D4CFC7-6810-4C18-A353-71A49782394F} = {E8FF2E71-1873-4CCD-98F9-59A378EE37F9}
+		{B64108C4-7A5F-48A2-BEE2-CB25948036E9} = {E8FF2E71-1873-4CCD-98F9-59A378EE37F9}
+		{A54C844F-AFF0-479E-8644-EDB697A33E4D} = {394DF799-BF67-4707-A90B-E3372E0B2715}
+		{B099DD77-A799-43B7-9E59-EB769309290D} = {394DF799-BF67-4707-A90B-E3372E0B2715}
+		{5CD6D7D9-BA6C-4633-9009-85108694A03A} = {394DF799-BF67-4707-A90B-E3372E0B2715}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = WebSocketServer\WebSocketServer.csproj
