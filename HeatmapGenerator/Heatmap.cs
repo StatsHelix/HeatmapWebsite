@@ -6,6 +6,7 @@ using System.Drawing.Imaging;
 using System.Collections.Generic;
 using System.Linq;
 using AbstractDatastore;
+using System.Globalization;
 
 namespace HeatmapGenerator
 {
@@ -244,15 +245,15 @@ namespace HeatmapGenerator
 
 					if (data[1] == "pos_x")
 					{
-						this.mapX = float.Parse(data[3]);
+						this.mapX = float.Parse(data[3], CultureInfo.InvariantCulture);
 					}
 					else if (data[1] == "pos_y")
 					{
-						this.mapY = float.Parse(data[3]);
+						this.mapY = float.Parse(data[3], CultureInfo.InvariantCulture);
 					}
 					else if (data[1] == "scale")
 					{
-						this.scale = float.Parse(data[3]);
+						this.scale = float.Parse(data[3], CultureInfo.InvariantCulture);
 					}
 				}
 			}
@@ -290,6 +291,8 @@ namespace HeatmapGenerator
 
 			return p;
 		}
+
+		public IFormatProvider CutureInfo { get; set; }
 	}
 }
 
