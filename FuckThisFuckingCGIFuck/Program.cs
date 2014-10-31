@@ -24,7 +24,7 @@ namespace FuckThisFuckingCGIFuck
 		// it's not a bug, it's a feature!!!!!!!!1111111oneoneoneeleven #believe
 		public static void Main(string[] args)
 		{
-			Database = new MongoDatastore(Assembly.GetEntryAssembly().GetName().Name);
+			Database = new MongoDatastore("DemoInfo");
 
 			var listener = new HttpListener();
 			listener.Prefixes.Add("http://localhost:5500/");
@@ -84,16 +84,12 @@ namespace FuckThisFuckingCGIFuck
 			}
 
 			switch (req.Url.AbsolutePath) {
-			case "/upload":
-				HandleDemoUpload(context, req);
-				break;
 			case "/file":
 				HandleFile(context, req);
 				break;
 			case "/fileExists":
 				HandleFileExists(context, req);
 				break;
-
 			case "/analysis":
 				HandleAnalysis(context, req);
 				break;
@@ -132,7 +128,7 @@ namespace FuckThisFuckingCGIFuck
 
 		static void HandleFile(HttpListenerContext context, HttpListenerRequest req)
 		{
-			if (req.QueryString["path"] != null && !Database.FileExists(req.QueryString["path"])) {
+			if (req.QueryString["path"] == null || !Database.FileExists(req.QueryString["path"])) {
 				Write404("db://" + req.QueryString["path"], context, req);
 				return;
 			}
