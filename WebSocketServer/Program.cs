@@ -98,10 +98,12 @@ namespace WSS
 							var ana = h.ParseHeaderOnly();
 							ana.DemoFile = demoFileName;
 							Database.Save(ana);
-							await session.SendObject(new {
-								Status = "AnalysisStarted",
-								Id = ana.ID
-							});
+
+							var asDoc = new BsonDocument();
+							asDoc["Status"] = "AnalysisStarted";
+							asDoc["Analysis"] = ana.ToBsonDocument();
+							await session.SendTextMessage(asDoc.ToJson(MongoJsonSettings));
+
 							h.ParseTheRest();
 						}
 
