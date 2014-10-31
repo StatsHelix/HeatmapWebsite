@@ -35,6 +35,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="TestDBTS.cs" />
+    <Compile Include="TestBitstreams.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -44,6 +45,10 @@
     <ProjectReference Include="..\WebSocketServer\WebSocketServer.csproj">
       <Project>{DC227D8B-9357-4C7E-93C4-DE5704832CD6}</Project>
       <Name>WebSocketServer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\demoinfo-public\DemoInfo\DemoInfo.csproj">
+      <Project>{22D4CFC7-6810-4C18-A353-71A49782394F}</Project>
+      <Name>DemoInfo</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
