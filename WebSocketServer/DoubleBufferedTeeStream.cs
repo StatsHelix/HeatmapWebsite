@@ -81,10 +81,11 @@ namespace WSS
 
 		public override int ReadByte()
 		{
-			var b = Underlying.ReadByte();
-			if (b != -1)
-				Additional.WriteByte(checked((byte)b));
-			return b;
+			if (Offset >= PrimaryLength)
+				if (!SwitchBuffers())
+					return -1;
+
+			return Primary[Offset++];
 		}
 
 		// cancellation is not supported because fuck you, that's why
