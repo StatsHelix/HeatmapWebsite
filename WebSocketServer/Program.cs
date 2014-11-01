@@ -122,8 +122,6 @@ namespace WSS
 						// TODO: handle cancellation and stuff
 						throw new System.IO.InvalidDataException("protocol violation");
 					else {
-						// timeout, quick ping
-						await session.Ping().WithTimeout(ClientReadTimeout);
 						// still there. send them their current position.
 						await session.SendObject(new { Status = "InQueue", QueuePosition = ticket.QueuePosition });
 					}
