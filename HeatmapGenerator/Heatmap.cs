@@ -239,7 +239,7 @@ namespace HeatmapGenerator
 				this.mapX = this.analysis.Overview.PosX;
 				this.mapY = this.analysis.Overview.PosY;
 				this.scale = this.analysis.Overview.Scale;
-
+				return;
 			}
 
 
