@@ -130,6 +130,12 @@ namespace HeatmapGenerator
 			CTKillOrigin = new EventMap();
 			TDeathPosition = new EventMap();
 			CTDeathPosition  = new EventMap();
+
+			//Keep the images clean. meh.
+			TKillsG.Clear(Color.Transparent);
+			CTKillsG.Clear(Color.Transparent);
+			TPathsG.Clear(Color.Transparent);
+			CTPathsG.Clear(Color.Transparent);
 		}
 
 		SolidBrush TBrushSolid = new SolidBrush(Color.FromArgb(200, Color.OrangeRed));
