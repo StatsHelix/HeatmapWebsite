@@ -37,7 +37,7 @@ namespace HeatmapGenerator
 		Bitmap CTKills = new Bitmap(1024, 1024);
 		Graphics TKillsG, CTKillsG;
 
-		float mapX, mapY, scale;
+		double mapX, mapY, scale;
 
 		private readonly IDatastore Datastore;
 
@@ -234,6 +234,15 @@ namespace HeatmapGenerator
 
 		private void SetCoordinates(string mapName)
 		{
+			if(this.analysis.Overview != null)
+			{
+				this.mapX = this.analysis.Overview.PosX;
+				this.mapY = this.analysis.Overview.PosY;
+				this.scale = this.analysis.Overview.Scale;
+
+			}
+
+
 			string[] lines = File.ReadAllLines(Path.Combine("maps", mapName + ".txt"));
 
 			foreach(string line in lines)
@@ -245,15 +254,15 @@ namespace HeatmapGenerator
 
 					if (data[1] == "pos_x")
 					{
-						this.mapX = float.Parse(data[3], CultureInfo.InvariantCulture);
+						this.mapX = double.Parse(data[3], CultureInfo.InvariantCulture);
 					}
 					else if (data[1] == "pos_y")
 					{
-						this.mapY = float.Parse(data[3], CultureInfo.InvariantCulture);
+						this.mapY = double.Parse(data[3], CultureInfo.InvariantCulture);
 					}
 					else if (data[1] == "scale")
 					{
-						this.scale = float.Parse(data[3], CultureInfo.InvariantCulture);
+						this.scale = double.Parse(data[3], CultureInfo.InvariantCulture);
 					}
 				}
 			}
