@@ -99,33 +99,6 @@ namespace FuckThisFuckingCGIFuck
 			}
 		}
 
-		static void HandleDemoUpload(HttpListenerContext context, HttpListenerRequest req)
-		{
-			var multipart = new HttpMultipart(req.InputStream, req.ContentType.Substring(MULTIPART_PREFIX.Length), req.ContentEncoding, "demo");
-			multipart.ReadBoundary();
-			var eDemo = multipart.ReadNextElement(256);
-			if (eDemo != null)
-				throw new Exception("lolwat");
-			context.Response.ContentType = "application/json";
-			var writer = new StreamWriter(context.Response.OutputStream);
-			writer.AutoFlush = true;
-
-			var demoFileName = Guid.NewGuid().ToString() + ".dem";
-			Database.StoreFile(req.InputStream, demoFileName);
-			var s = Database.RetrieveFile(demoFileName);
-
-			Heatmap h = new Heatmap(Database, s);
-			var ana = h.ParseHeaderOnly();
-			ana.DemoFile = demoFileName;
-			Database.Save(ana);
-			writer.WriteLine(JsonConvert.SerializeObject(new {
-				result = "success",
-				id = ana.ID
-			}));
-			context.Response.Close();
-			h.ParseTheRest();
-		}
-
 		static void HandleFile(HttpListenerContext context, HttpListenerRequest req)
 		{
 			if (req.QueryString["path"] == null || !Database.FileExists(req.QueryString["path"])) {
