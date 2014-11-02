@@ -108,6 +108,7 @@ namespace FuckThisFuckingCGIFuck
 
 			context.Response.ContentType = Database.GetFileType(req.QueryString["path"]);
 			context.Response.ContentLength64 = Database.GetFileSize(req.QueryString["path"]);
+			context.Response.Headers.Add("Cache-Control", "no-transform,public,max-age=31536000,s-maxage=31536000");
 
 			Database.RetrieveFile(req.QueryString["path"]).CopyTo(context.Response.OutputStream);
 
