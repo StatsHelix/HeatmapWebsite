@@ -90,7 +90,7 @@ namespace WSS
 						else
 							throw new NotImplementedException();
 						Debug.WriteLine("omfg getting stream now");
-						var uploadStream = await session.ReceiveBinaryMessage().WithTimeout(ClientReadTimeout);
+						var uploadStream = await session.ReceiveBinaryMessage();
 						Debug.WriteLine("SHIT SHIT SHIT GOT THE STREAM EVERYTHING IS AWESOME");
 
 						var demoFileName = Guid.NewGuid().ToString() + ".dem";
