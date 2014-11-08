@@ -173,8 +173,8 @@ namespace TestDemoPlayer
 					brush = new SolidBrush (Color.Red);
 				}
 
-				endPoint.X += (int)(Math.Sin ((player.ViewDirectionX / 360) * 2 * Math.PI) * 20);
-				endPoint.Y += (int)(Math.Cos ((player.ViewDirectionX / 360) * 2 * Math.PI) * 20);
+				endPoint.X += (int)(Math.Sin ((player.ViewDirectionX / 360) * 2 * Math.PI + Math.PI / 2) * 20);
+				endPoint.Y += (int)(Math.Cos((player.ViewDirectionX / 360) * 2 * Math.PI + Math.PI / 2) * 20);
 
 				g.FillEllipse(brush , new Rectangle(p2, new Size(15, 15)));
 				g.DrawString(player.Name + " | " + player.HP.ToString(), new Font(FontFamily.GenericSansSerif, 14), brush, p3);
