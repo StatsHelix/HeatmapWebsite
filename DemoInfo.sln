@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeatmapGenerator", "Heatmap
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utility libs", "Utility libs", "{394DF799-BF67-4707-A90B-E3372E0B2715}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbstractDatastore", "AbstractDatastore\AbstractDatastore.csproj", "{A54C844F-AFF0-479E-8644-EDB697A33E4D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AbstractDatastore", "MongoDatastore\MongoDatastore.csproj", "{A54C844F-AFF0-479E-8644-EDB697A33E4D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActuallyWorkingWebSockets", "ActuallyWorkingWebSockets\ActuallyWorkingWebSockets\ActuallyWorkingWebSockets.csproj", "{B099DD77-A799-43B7-9E59-EB769309290D}"
 EndProject
