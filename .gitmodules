@@ -9,4 +9,4 @@
 	url = https://github.com/main--/SyslogTrace.git
 [submodule "MongoDatastore"]
 	path = MongoDatastore
-	url = git@github.com:moritzuehling/MongoDatastore.git
+	url = https://github.com/moritzuehling/MongoDatastore.git
