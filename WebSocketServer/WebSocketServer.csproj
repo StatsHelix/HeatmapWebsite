@@ -68,7 +68,7 @@
     </ProjectReference>
     <ProjectReference Include="..\MongoDatastore\MongoDatastore.csproj">
       <Project>{A54C844F-AFF0-479E-8644-EDB697A33E4D}</Project>
-      <Name>AbstractDatastore</Name>
+      <Name>MongoDatastore</Name>
     </ProjectReference>
     <ProjectReference Include="..\SyslogTrace\SyslogTrace\SyslogTrace.csproj">
       <Project>{5CD6D7D9-BA6C-4633-9009-85108694A03A}</Project>
