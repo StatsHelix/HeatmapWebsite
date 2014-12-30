@@ -12,6 +12,7 @@ using MongoDB.Bson.Serialization;
 using AbstractDatastore;
 using ActuallyWorkingWebSockets;
 using HeatmapGenerator;
+using System.IO;
 
 namespace WSS
 {
@@ -28,6 +29,10 @@ namespace WSS
 			#else
 			Trace.Listeners.Add(new ConsoleTraceListener(true));
 			#endif
+
+			if (!Directory.Exists ("demos")) {
+				Directory.CreateDirectory ("demos");
+			}
 
 			Database = new MongoDatastore("DemoInfo");
 
@@ -94,8 +99,8 @@ namespace WSS
 						Debug.WriteLine("SHIT SHIT SHIT GOT THE STREAM EVERYTHING IS AWESOME");
 
 						var demoFileName = Guid.NewGuid().ToString() + ".dem";
-						using (var dbStoreStream = Database.StoreStream(demoFileName))
-						using (var tee = new DoubleBufferedTeeStream(uploadStream, dbStoreStream)) { // upload to db WHILE PARSING :D
+						using (var dbStoreStream = File.Create(Path.Combine("demos", demoFileName)))
+						using (var tee = new DoubleBufferedTeeStream(uploadStream, dbStoreStream)) { // upload to "db" (file system) WHILE PARSING :D
 							var h = new Heatmap(Database, tee, overview);
 							h.OnRoundAnalysisFinished += async (analysis) => {
 								var doc = new BsonDocument();

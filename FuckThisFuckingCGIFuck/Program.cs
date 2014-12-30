@@ -66,7 +66,6 @@ namespace FuckThisFuckingCGIFuck
 			}
 		}
 
-		private static string MULTIPART_PREFIX = "multipart/form-data; boundary=";
 		static void HandleRequest(HttpListenerContext context)
 		{
 			var req = context.Request;
