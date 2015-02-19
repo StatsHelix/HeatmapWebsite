@@ -25,17 +25,12 @@ namespace HeatmapGenerator
 		EventMap TKillOrigin = new EventMap();
 		EventMap CTKillOrigin = new EventMap();
 		EventMap TDeathPosition = new EventMap();
-		EventMap CTDeathPosition = new EventMap();
+        EventMap CTDeathPosition = new EventMap();
+
+        EventMap CTHoldingPosition = new EventMap();
+        EventMap THoldingPosition = new EventMap();
 
 		DemoAnalysis analysis;
-
-		Bitmap TPaths = new Bitmap(1024, 1024);
-		Bitmap CTPaths = new Bitmap(1024, 1024);
-		Graphics TPathsG, CTPathsG;
-
-		Bitmap TKills = new Bitmap(1024, 1024);
-		Bitmap CTKills = new Bitmap(1024, 1024);
-		Graphics TKillsG, CTKillsG;
 
 		double mapX, mapY, scale;
 
@@ -43,16 +38,16 @@ namespace HeatmapGenerator
 
 		public event Action<DemoAnalysis> OnRoundAnalysisFinished;
 
+        bool afterFirstKill = true;
+
+        public int roundStartTick = -1;
+
 		public Heatmap (IDatastore datastore, Stream demo, Overview overview) : this(datastore, demo, overview, new DemoAnalysis())
 		{ }
 
 		public Heatmap (IDatastore datastore, Stream demo, Overview overview, DemoAnalysis analysis)
 		{
 			parser = new DemoParser (demo);
-			TPathsG = Graphics.FromImage(TPaths);
-			CTPathsG = Graphics.FromImage(CTPaths);
-			TKillsG = Graphics.FromImage(TKills);
-			CTKillsG = Graphics.FromImage(CTKills);
 
 			parser.FlashNadeExploded += HandleFlashNadeExploded;
 			parser.SmokeNadeStarted += HandleSmokeNadeStarted;
@@ -81,13 +76,16 @@ namespace HeatmapGenerator
 		int roundNum = 0;
 		void HandleRoundStart (object sender, RoundStartedEventArgs e)
 		{
-			foreach (var player in parser.Players.Values) {
+			foreach (var player in parser.PlayingParticipants) {
 				var p = GetParticipant(player);
-				p.Name = player.Name;
-				p.SteamID = player.SteamID;
 			}
 
+            afterFirstKill = false;
+            roundStartTick = parser.CurrentTick;
+
 			var CurrentRound = new RoundEventMap(Datastore);
+            CurrentRound.CTScore = parser.CTScore;
+            CurrentRound.TScore = parser.TScore;
 			CurrentRound.Maps = new Dictionary<string, EventMap>() {
 				{ "TFlashes", 		TFlashes},
 				{ "CTFlashes", 		CTFlashes},
@@ -100,12 +98,13 @@ namespace HeatmapGenerator
 				{ "CTKillOrigin", 	CTKillOrigin},
 				{ "TDeathPosition", TDeathPosition },
 				{ "CTDeathPosition",CTDeathPosition },
+				{ "THoldingPosition", THoldingPosition },
+				{ "CTHoldingPosition",CTHoldingPosition },
 			};
 
-			CurrentRound.AddBitmap("TKills", TKills);
-			CurrentRound.AddBitmap("CTKills", CTKills);
-			CurrentRound.AddBitmap("TPaths", TPaths);
-			CurrentRound.AddBitmap("CTPaths", CTPaths);
+            // Improved match-start detection
+            if (parser.CTScore + parser.TScore == 1)
+                analysis.Rounds.Clear();
 
 			analysis.Rounds.Add(CurrentRound);
 
@@ -128,66 +127,44 @@ namespace HeatmapGenerator
 			Fire = new EventMap();
 			TKillOrigin = new EventMap();
 			CTKillOrigin = new EventMap();
-			TDeathPosition = new EventMap();
-			CTDeathPosition  = new EventMap();
+            TDeathPosition = new EventMap();
+            CTDeathPosition = new EventMap();
+            CTHoldingPosition = new EventMap();
+            THoldingPosition = new EventMap();
+        }
 
-			//Keep the images clean. meh.
-			TKillsG.Clear(Color.Transparent);
-			CTKillsG.Clear(Color.Transparent);
-			TPathsG.Clear(Color.Transparent);
-			CTPathsG.Clear(Color.Transparent);
-		}
-
-		SolidBrush TBrushSolid = new SolidBrush(Color.FromArgb(200, Color.OrangeRed));
-		SolidBrush CTBrushSolid = new SolidBrush(Color.FromArgb(200, Color.CornflowerBlue));
-
-		SolidBrush TBrush = new SolidBrush(Color.FromArgb(30, Color.OrangeRed));
-		SolidBrush CTBrush = new SolidBrush(Color.FromArgb(30, Color.CornflowerBlue));
-		Size rectSize = new Size(3, 3);
 		void HandleTickDone (object sender, TickDoneEventArgs e)
-		{
-			foreach (var player in parser.Players.Values.Where(a => a.IsAlive)) {
-				Brush b = null;
-				Graphics g = null;
-				if (player.Team == Team.CounterTerrorist) {
-					b = CTBrush;
-					g = CTPathsG;
-				} else {
-					b = TBrush;
-					g = TPathsG;
-				}
-
-				var p = MapPoint(player.Position);
-				p.X -= 1;
-				p.Y -= 1;
-
-				g.FillRectangle(b, new Rectangle(p.ToPoint(), rectSize));
-			}
+        {
+            float timeInRound = (parser.CurrentTick - roundStartTick) * parser.TickTime;
+            if(parser.CurrentTick % Math.Round((parser.TickRate / 2), 0) == 0) //all 500 ms
+            {
+                foreach(var player in parser.PlayingParticipants.Where(a => a.SteamID != 0 && a.IsAlive))
+                {
+                    if(!afterFirstKill && timeInRound > 10)
+                    {
+                        if (player.Team == Team.CounterTerrorist)
+                            CTHoldingPosition.AddPoint(MapPoint(player));
+                        else
+                            THoldingPosition.AddPoint(MapPoint(player));
+                    }
+                }
+            }
 		}
 
 		void HandlePlayerKilled (object sender, PlayerKilledEventArgs e)
 		{
 			if (e.Killer.Team == Team.CounterTerrorist)
-				CTKillOrigin.AddPoint(MapPoint(e.Killer.Position));
+                CTKillOrigin.AddPoint(MapPoint(e.Killer));
 			else
-				TKillOrigin.AddPoint(MapPoint(e.Killer.Position));
+                TKillOrigin.AddPoint(MapPoint(e.Killer));
 
 			if (e.DeathPerson.Team == Team.CounterTerrorist)
-				CTDeathPosition.AddPoint(MapPoint(e.DeathPerson.Position));
+                CTDeathPosition.AddPoint(MapPoint(e.DeathPerson));
 			else
-				TDeathPosition.AddPoint(MapPoint(e.DeathPerson.Position));
+                TDeathPosition.AddPoint(MapPoint(e.DeathPerson));
 
-			Graphics g = e.Killer.Team == Team.CounterTerrorist ? CTKillsG : TKillsG;
-			Brush b = e.Killer.Team == Team.CounterTerrorist ? CTBrushSolid : TBrushSolid;
+            afterFirstKill = true;
 
-			Point p1 = MapPoint(e.Killer.Position).ToPoint(), p2 = MapPoint(e.DeathPerson.Position).ToPoint();
-			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-			g.DrawLine(new Pen(b, 1.5f), p1, p2);
-			g.FillEllipse(b, p1.X - 3, p1.Y - 3, 7, 7);
-			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-
-			GetParticipant(e.Killer).Kills++;
-			GetParticipant(e.DeathPerson).Deaths++;
 		}
 
 		void HandleFireNadeStarted (object sender, FireEventArgs e)
@@ -201,9 +178,9 @@ namespace HeatmapGenerator
 				return;
 
 			if (e.ThrownBy.Team == Team.CounterTerrorist)
-				CTNades.AddPoint(MapPoint(e.Position));
+				CTNades.AddPoint(MapPoint(e.Position, e.ThrownBy));
 			else
-				TNades.AddPoint(MapPoint(e.Position));
+                TNades.AddPoint(MapPoint(e.Position, e.ThrownBy));
 		}
 
 		void HandleSmokeNadeStarted (object sender, SmokeEventArgs e)
@@ -212,9 +189,9 @@ namespace HeatmapGenerator
 				return;
 
 			if (e.ThrownBy.Team == Team.CounterTerrorist)
-				CTSmokes.AddPoint(MapPoint(e.Position));
+                CTSmokes.AddPoint(MapPoint(e.Position, e.ThrownBy));
 			else
-				TSmokes.AddPoint(MapPoint(e.Position));
+                TSmokes.AddPoint(MapPoint(e.Position, e.ThrownBy));
 		}
 
 		void HandleFlashNadeExploded (object sender, FlashEventArgs e)
@@ -223,15 +200,14 @@ namespace HeatmapGenerator
 				return;
 
 			if (e.ThrownBy.Team == Team.CounterTerrorist)
-				CTFlashes.AddPoint(MapPoint(e.Position));
+				CTFlashes.AddPoint(MapPoint(e.Position, e.ThrownBy));
 			else
-				TFlashes.AddPoint(MapPoint(e.Position));
+                TFlashes.AddPoint(MapPoint(e.Position, e.ThrownBy));
 		}
 
 		public DemoAnalysis ParseHeaderOnly()
 		{
-			parser.ParseDemo(false);
-
+            parser.ParseHeader();
 			analysis.Metadata = parser.Header;
 			SetCoordinates(analysis.Metadata.MapName);
 
@@ -247,7 +223,6 @@ namespace HeatmapGenerator
 				this.scale = this.analysis.Overview.Scale;
 				return;
 			}
-
 
 			string[] lines = File.ReadAllLines(Path.Combine("maps", mapName + ".txt"));
 
@@ -297,11 +272,28 @@ namespace HeatmapGenerator
 			);
 		}
 
+        public Vector2 MapPoint(Vector vec, Player p)
+        {
+            return new Vector2(
+                (int)((vec.X - mapX) / scale),
+                (int)((mapY - vec.Y) / scale),
+                p
+            );
+        }
+        public Vector2 MapPoint(Player p)
+        {
+            return new Vector2(
+                (int)((p.Position.X - mapX) / scale),
+                (int)((mapY - p.Position.Y) / scale),
+                p
+            );
+        }
+
 		private Participant GetParticipant(Player player)
 		{
-			var p = analysis.Participants.FirstOrDefault(a => a.IngameID == player.EntityID);
+			var p = analysis.Participants.FirstOrDefault(a => a.SteamID == player.SteamID);
 
-			if (p == null)
+            if (p == null && player.SteamID != 0)
 				analysis.Participants.Add( p = new Participant(player) );
 
 			return p;

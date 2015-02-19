@@ -12,7 +12,8 @@ namespace HeatmapGenerator
 	{
 		public int IngameID { get; set; }
 		public string Name { get; set; }
-		public long SteamID { get; set; }
+        public string PointID { get; set; }
+        public long SteamID { get; set; }
 		public int Kills { get; set; }
 		public int Deaths { get; set; }
 		public Team StartingTeam { get; set; }
@@ -21,7 +22,8 @@ namespace HeatmapGenerator
 		{
 			this.IngameID = player.EntityID;
 			this.Name = player.Name;
-			this.SteamID = player.SteamID;
+            this.PointID = Vector2.GetSteamID(player.SteamID);
+            this.SteamID = player.SteamID;
 			this.StartingTeam = player.Team;
 		}
 

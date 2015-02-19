@@ -12,10 +12,9 @@ namespace HeatmapGenerator
 	public class RoundEventMap
 	{
 		public Dictionary<string, EventMap> Maps { get; set; }
-		public Dictionary<string, string> Bitmaps { get; set; }
-		public List<Participant> Participants { get; set; }
 
-		public string Directory = Path.GetRandomFileName();
+        public int CTScore { get; set; }
+        public int TScore { get; set; }
 
 		private readonly IDatastore Datastore;
 
@@ -24,18 +23,6 @@ namespace HeatmapGenerator
 			Datastore = datastore;
 
 			Maps = new Dictionary<string, EventMap>();
-			Bitmaps = new Dictionary<string, string>();
-			Participants = new List<Participant>();
-		}
-
-		public void AddBitmap(string name, Image image)
-		{
-			string fileName = Path.Combine(Directory, name + ".png");
-
-			using (var stream = Datastore.StoreStream(fileName, "image/png"))
-				image.Save(stream, ImageFormat.Png);
-
-			Bitmaps.Add(name, fileName);
 		}
 	}
 }
