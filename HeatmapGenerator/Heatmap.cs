@@ -56,6 +56,7 @@ namespace HeatmapGenerator
 			parser.PlayerKilled += HandlePlayerKilled;
 			parser.TickDone += HandleTickDone;
 			parser.RoundStart += HandleRoundStart;
+            parser.FreezetimeEnded += parser_FreezetimeEnded;
 
 			parser.MatchStarted += HandleMatchStarted;
 
@@ -64,6 +65,12 @@ namespace HeatmapGenerator
 
 			this.Datastore = datastore;
 		}
+
+        void parser_FreezetimeEnded(object sender, FreezetimeEndedEventArgs e)
+        {
+            afterFirstKill = false;
+            roundStartTick = parser.CurrentTick;
+        }
 
 		void HandleMatchStarted (object sender, MatchStartedEventArgs e)
 		{
@@ -80,8 +87,7 @@ namespace HeatmapGenerator
 				var p = GetParticipant(player);
 			}
 
-            afterFirstKill = false;
-            roundStartTick = parser.CurrentTick;
+
 
 			var CurrentRound = new RoundEventMap(Datastore);
             CurrentRound.CTScore = parser.CTScore;
@@ -140,7 +146,7 @@ namespace HeatmapGenerator
             {
                 foreach(var player in parser.PlayingParticipants.Where(a => a.SteamID != 0 && a.IsAlive))
                 {
-                    if(!afterFirstKill && timeInRound > 10)
+                    if(!afterFirstKill && timeInRound > 15) //15 sec freezetime + 10 sec running
                     {
                         if (player.Team == Team.CounterTerrorist)
                             CTHoldingPosition.AddPoint(MapPoint(player));
