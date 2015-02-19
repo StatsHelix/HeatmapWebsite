@@ -49,7 +49,8 @@ namespace TestDemoPlayer
 
             parser = new DemoParser(reader);
 
-            parser.ParseDemo(false);
+            parser.ParseHeader();
+            parser.ParseToEnd();
 
 
             LoadBackgroundInfo();
