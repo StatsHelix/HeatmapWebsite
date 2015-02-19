@@ -163,11 +163,11 @@ namespace FuckThisFuckingCGIFuck
 			}
 
 			var analysis = Database.LoadByObjectID<DemoAnalysis>(req.QueryString["id"]).ToBsonDocument();
-			analysis.Remove("DemoFile");
 
 			if (analysis == null) {
 				Write404("analysis://" + req.QueryString["id"], context, req);
 			} else {
+                analysis.Remove("DemoFile");
 				var writer = new StreamWriter(context.Response.OutputStream, Encoding.UTF8);
 				writer.Write(analysis.ToJson(jsonSettings));
 				writer.Flush();
