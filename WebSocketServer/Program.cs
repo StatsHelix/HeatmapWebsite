@@ -34,7 +34,7 @@ namespace WSS
 				Directory.CreateDirectory ("demos");
 			}
 
-			Database = new MongoDatastore("DemoInfo");
+            Database = new MongoDatastore("DemoInfo");
 
 			var contexts = new List<UploadWorkerContext>(Slots);
 			for (int i = 0; i < Slots; i++)

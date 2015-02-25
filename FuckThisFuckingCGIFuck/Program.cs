@@ -24,7 +24,7 @@ namespace FuckThisFuckingCGIFuck
 		// it's not a bug, it's a feature!!!!!!!!1111111oneoneoneeleven #believe
 		public static void Main(string[] args)
 		{
-			Database = new MongoDatastore("HeatmapGenerator");
+            Database = new MongoDatastore("DemoInfo");
 
 			var listener = new HttpListener();
 			listener.Prefixes.Add("http://localhost:5501/");

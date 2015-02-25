@@ -30,6 +30,14 @@ namespace HeatmapGenerator
         EventMap CTHoldingPosition = new EventMap();
         EventMap THoldingPosition = new EventMap();
 
+        EventMap CTGoodFlashes = new EventMap();
+        EventMap TGoodFlashes = new EventMap();
+
+        EventMap CTBadFlashes = new EventMap();
+        EventMap TBadFlashes = new EventMap();
+
+        KillMap Kills = new KillMap();
+
 		DemoAnalysis analysis;
 
 		double mapX, mapY, scale;
@@ -105,8 +113,16 @@ namespace HeatmapGenerator
 				{ "TDeathPosition", TDeathPosition },
 				{ "CTDeathPosition",CTDeathPosition },
 				{ "THoldingPosition", THoldingPosition },
-				{ "CTHoldingPosition",CTHoldingPosition },
+				{ "CTHoldingPosition", CTHoldingPosition },
+				{ "TGoodFlashes", TGoodFlashes },
+				{ "CTGoodFlashes", CTGoodFlashes },
+				{ "TBadFlashes", TBadFlashes },
+				{ "CTBadFlashes", CTBadFlashes },
 			};
+
+            CurrentRound.Kills = Kills;
+
+
 
             // Improved match-start detection
             if (parser.CTScore + parser.TScore == 1)
@@ -137,6 +153,12 @@ namespace HeatmapGenerator
             CTDeathPosition = new EventMap();
             CTHoldingPosition = new EventMap();
             THoldingPosition = new EventMap();
+            CTGoodFlashes = new EventMap();
+            TGoodFlashes = new EventMap();
+            CTBadFlashes = new EventMap();
+            TBadFlashes = new EventMap();
+
+            Kills = new KillMap();
         }
 
 		void HandleTickDone (object sender, TickDoneEventArgs e)
@@ -168,6 +190,17 @@ namespace HeatmapGenerator
                 CTDeathPosition.AddPoint(MapPoint(e.DeathPerson));
 			else
                 TDeathPosition.AddPoint(MapPoint(e.DeathPerson));
+
+            Kills.AddPoint(new Kill()
+            {
+                Headshot = e.Headshot ? 1 : 0,
+                Weapon = e.Weapon.Weapon.ToString(),
+                KillerPosition = e.Killer != null && e.Killer.IsAlive ? MapPoint(e.Killer) : null,
+                VictimPosition = e.DeathPerson != null && e.DeathPerson.IsAlive ? MapPoint(e.DeathPerson) : null,
+                KillerTeam = e.Killer != null ? (int)e.Killer.Team : -1,
+                VictimTeam = e.DeathPerson != null ? (int)e.DeathPerson.Team : -1,
+
+            });
 
             afterFirstKill = true;
 
@@ -205,10 +238,28 @@ namespace HeatmapGenerator
 			if (e.ThrownBy == null)
 				return;
 
-			if (e.ThrownBy.Team == Team.CounterTerrorist)
-				CTFlashes.AddPoint(MapPoint(e.Position, e.ThrownBy));
-			else
+            int flashedCTs = e.FlashedPlayers.Count(a => a.IsAlive && a.Team == Team.CounterTerrorist);
+            int flashedTs = e.FlashedPlayers.Count(a => a.IsAlive && a.Team == Team.Terrorist);
+
+            if (e.ThrownBy.Team == Team.CounterTerrorist)
+            {
+                CTFlashes.AddPoint(MapPoint(e.Position, e.ThrownBy));
+
+                if(flashedTs > 0)
+                    CTGoodFlashes.AddPoint(MapPoint(e.Position, e.ThrownBy));
+                else
+                    CTBadFlashes.AddPoint(MapPoint(e.Position, e.ThrownBy));
+            }
+            else
+            {
                 TFlashes.AddPoint(MapPoint(e.Position, e.ThrownBy));
+
+                if (flashedCTs > 0)
+                    TGoodFlashes.AddPoint(MapPoint(e.Position, e.ThrownBy));
+                else
+                    TBadFlashes.AddPoint(MapPoint(e.Position, e.ThrownBy));
+            }
+
 		}
 
 		public DemoAnalysis ParseHeaderOnly()

@@ -25,6 +25,9 @@ namespace HeatmapGenerator
 
 		public Overview Overview { get; set; }
 
+        [BsonIgnoreIfDefault]
+        public int Version { get; set; }
+
 		public DemoAnalysis()
 		{
 			Participants = new List<Participant>();

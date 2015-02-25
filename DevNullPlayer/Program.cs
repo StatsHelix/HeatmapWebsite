@@ -8,8 +8,12 @@ namespace DevNullPlayer
 	{
 		public static void Main(string[] args)
 		{
-			using (var input = File.OpenRead(args[0]))
-				new DemoParser(input).ParseDemo(true);
+            using (var input = File.OpenRead(args[0]))
+            {
+                DemoParser p = new DemoParser(input);
+                p.ParseHeader();
+                p.ParseToEnd();
+            }
 		}
 	}
 }
