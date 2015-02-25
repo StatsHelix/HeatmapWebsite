@@ -123,11 +123,6 @@ namespace HeatmapGenerator
             CurrentRound.Kills = Kills;
 
 
-
-            // Improved match-start detection
-            if (parser.CTScore + parser.TScore == 1)
-                analysis.Rounds.Clear();
-
 			analysis.Rounds.Add(CurrentRound);
 
 			if (!analysis.IsFinished) {
