@@ -46,7 +46,13 @@ namespace HeatmapGenerator
                     Heatmap h = new Heatmap(
                        Database,
                        File.OpenRead(file),
-                        null
+                        new Overview()
+                        {
+                            ImageLink = "http://imgur.com/Hgosd2m",
+                            PosX = -3182,
+                            PosY = 2671,
+                            Scale = 5,
+                        }
                         );
 
                     h.ParseHeaderOnly();
