@@ -178,10 +178,10 @@ namespace HeatmapGenerator
             {
                 foreach (var player in parser.PlayingParticipants.Where(a => a.SteamID != 0 && a.IsAlive))
                 {
-                    if (player.Team == Team.CounterTerrorist)
+                    /* if (player.Team == Team.CounterTerrorist)
                         CTPosition.AddPoint(MapPoint(player));
                     else
-                        TPosition.AddPoint(MapPoint(player));
+                        TPosition.AddPoint(MapPoint(player)); */
                 }
             }
 
