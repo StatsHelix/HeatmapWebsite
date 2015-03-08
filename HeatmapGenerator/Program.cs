@@ -17,7 +17,52 @@ namespace HeatmapGenerator
 
 		public static void Main (string[] args)
 		{
+            if (args.Length != 0 && args[0] == "--reparse")
+            {
+                Reparse();
+                return;
+            }
+            else if (args.Length != 0 && File.Exists(args[0]))
+            {
+                Heatmap h = new Heatmap(
+                   Database,
+                   File.OpenRead(args[0]),
+                    null
+                    );
 
+                h.ParseHeaderOnly();
+                var result = h.ParseTheRest();
+                Database.Save<DemoAnalysis>(result);
+            }
+            else if (args.Length != 0 && Directory.Exists(args[0]))
+            {
+                foreach (var file in Directory.GetFiles(args[0], "*.dem"))
+                {
+                    Console.WriteLine("Parsing file " + file);
+
+                    Heatmap h = new Heatmap(
+                       Database,
+                       File.OpenRead(file),
+                        null
+                        );
+
+                    h.ParseHeaderOnly();
+                    var result = h.ParseTheRest();
+                    Database.Save<DemoAnalysis>(result);
+
+                    Console.WriteLine("Saved as " + result.ID);
+                }
+            }
+            else 
+            {
+                Console.WriteLine("Args: Either --reparse, or a file. ");
+            }
+
+            
+		}
+
+        private static void Reparse()
+        {
             foreach (var ana in Database.LoadAll<DemoAnalysis>())
             {
                 Console.WriteLine("Analysis: " + ana.ID.ToString());
@@ -27,9 +72,15 @@ namespace HeatmapGenerator
 
                 currentAna = ana;
 
-                if (!ana.IsFinished || ana.Version == 2)
+                if (!ana.IsFinished)
                 {
-                    Console.WriteLine("skipping...");
+                    //Console.WriteLine("removing...");
+                    //Database.RemoveByObjectID<DemoAnalysis>(ana.ID.AsObjectId);
+                    continue;
+                }
+
+                if (ana.Version == 3)
+                {
                     continue;
                 }
 
@@ -37,7 +88,7 @@ namespace HeatmapGenerator
                 t.IsBackground = true;
                 t.Start();
 
-                for(int i = 0; i < 30; i++)
+                for (int i = 0; i < 30; i++)
                 {
                     Console.Write(i + ",");
 
@@ -62,10 +113,10 @@ namespace HeatmapGenerator
 
                 Console.WriteLine("Saving Analysis: " + result.ID.ToString());
 
-                ana.Version = 2;
+                ana.Version = 3;
                 Database.Save<DemoAnalysis>(result);
             }
-		}
+        }
 
         static void ParseDemo()
         {

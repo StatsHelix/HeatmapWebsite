@@ -8,11 +8,17 @@ namespace DevNullPlayer
 	{
 		public static void Main(string[] args)
 		{
-            using (var input = File.OpenRead(args[0]))
+            foreach (var file in Directory.GetFiles(@"D:\Users\Moritz\Desktop\playtest2", "*.dem"))
             {
-                DemoParser p = new DemoParser(input);
-                p.ParseHeader();
-                p.ParseToEnd();
+                Console.WriteLine("Parsing " + file);
+                using (var input = File.OpenRead(args[0]))
+                {
+                    using (DemoParser p = new DemoParser(input))
+                    {
+                        p.ParseHeader();
+                        p.ParseToEnd();
+                    }
+                }
             }
 		}
 	}

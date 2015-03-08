@@ -53,7 +53,7 @@ namespace WSS
 			new Dictionary<string, Func<WebSocketSession, dynamic, Task>> {
 			{ "UploadDemo", HandleUploadRequest },
 		};
-		private static readonly TimeSpan ClientReadTimeout = TimeSpan.FromSeconds(1);
+		private static readonly TimeSpan ClientReadTimeout = TimeSpan.FromSeconds(5);
 		private static async Task HandleClient(WebSocketSession session)
 		{
 			while (true) {
@@ -65,16 +65,6 @@ namespace WSS
 
 		private static readonly JsonWriterSettings MongoJsonSettings = new JsonWriterSettings { OutputMode = JsonOutputMode.Strict };
 		private static async Task HandleUploadRequest(WebSocketSession session, dynamic request) {
-			var alreadyUploaded = Database.GetFilenameByHash((string)request.MD5);
-			if (alreadyUploaded != null) {
-				var analysis = Database.LoadBy<DemoAnalysis>("DemoFile", alreadyUploaded);
-				var doc = new BsonDocument();
-				doc["Status"] = "AlreadyUploaded";
-				doc["Analysis"] = analysis.ToBsonDocument();
-				await session.SendTextMessage(doc.ToJson(MongoJsonSettings));
-				return;
-			}
-
 			using (var ticket = q.EnterQueue()) {
 				var getContext = ticket.GetContext();
 				var clientQuery = session.ReceiveTextMessage();

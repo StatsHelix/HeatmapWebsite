@@ -172,10 +172,26 @@ namespace HeatmapGenerator
                     }
                 }
             }
+
+
+            if (parser.CurrentTick % Math.Round((parser.TickRate / 4), 0) == 0) //all 250 ms
+            {
+                foreach (var player in parser.PlayingParticipants.Where(a => a.SteamID != 0 && a.IsAlive))
+                {
+                    if (player.Team == Team.CounterTerrorist)
+                        CTPosition.AddPoint(MapPoint(player));
+                    else
+                        TPosition.AddPoint(MapPoint(player));
+                }
+            }
+
 		}
 
 		void HandlePlayerKilled (object sender, PlayerKilledEventArgs e)
 		{
+            if (e.Killer == null || e.DeathPerson == null)
+                return;
+
 			if (e.Killer.Team == Team.CounterTerrorist)
                 CTKillOrigin.AddPoint(MapPoint(e.Killer));
 			else

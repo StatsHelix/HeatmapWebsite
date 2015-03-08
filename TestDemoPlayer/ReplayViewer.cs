@@ -149,7 +149,7 @@ namespace TestDemoPlayer
             g.Clear(Color.Transparent);
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-			foreach(var player in parser.Players.Values.Where(a => a.Team != Team.Spectate))
+			foreach(var player in parser.PlayingParticipants)
             {
 				var p = MapPoint(player.LastAlivePosition);
 				var endPoint = p;
