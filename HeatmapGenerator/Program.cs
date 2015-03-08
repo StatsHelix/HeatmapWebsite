@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -36,6 +37,8 @@ namespace HeatmapGenerator
             }
             else if (args.Length != 0 && Directory.Exists(args[0]))
             {
+                List<string> urls = new List<string>();
+
                 foreach (var file in Directory.GetFiles(args[0], "*.dem"))
                 {
                     Console.WriteLine("Parsing file " + file);
@@ -48,10 +51,20 @@ namespace HeatmapGenerator
 
                     h.ParseHeaderOnly();
                     var result = h.ParseTheRest();
+
+                    result.DemoFile = Path.GetFileName(file);
+
                     Database.Save<DemoAnalysis>(result);
 
+
+                    
                     Console.WriteLine("Saved as " + result.ID);
+
+                    urls.Add(result.ID.ToString());
                 }
+
+                Console.WriteLine("URL: ");
+                Console.WriteLine(string.Join(",", urls));
             }
             else 
             {
