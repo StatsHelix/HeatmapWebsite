@@ -23,6 +23,11 @@ namespace HeatmapGenerator
                 Reparse();
                 return;
             }
+            if (args.Length != 0 && args[0] == "--massparse")
+            {
+                Massparse();
+                return;
+            }
             else if (args.Length != 0 && File.Exists(args[0]))
             {
                 Heatmap h = new Heatmap(
@@ -128,6 +133,30 @@ namespace HeatmapGenerator
 
                 ana.Version = 3;
                 Database.Save<DemoAnalysis>(result);
+            }
+        }
+
+
+        private static void Massparse()
+        {
+            Dictionary<string, List<string>> maps = new Dictionary<string, List<string>>();
+
+            foreach (var ana in Database.LoadAll<DemoAnalysis>())
+            {
+                if (!ana.IsFinished)
+                {
+                    continue;
+                }
+
+                if (!maps.ContainsKey(ana.Metadata.MapName)) {
+                    maps[ana.Metadata.MapName] = new List<string>();
+                }
+
+                maps[ana.Metadata.MapName].Add(ana.ID.ToString());
+            }
+
+            foreach(var map in maps) {
+                Console.WriteLine("[{0}](http://demo.ehvag.de/#{1})", map.Key, string.Join(",", map.Value));
             }
         }
 
