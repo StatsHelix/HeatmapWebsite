@@ -18,6 +18,9 @@ bld/
 [Bb]in/
 [Oo]bj/
 
+# The live system.
+live__/
+
 # Roslyn cache directories
 *.ide/
 

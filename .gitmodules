@@ -1,6 +1,6 @@
 [submodule "demoinfo-public"]
 	path = demoinfo-public
-	url = git@github.com:EHVAG/demoinfo.git
+	url = https://github.com/EHVAG/demoinfo.git
 [submodule "ActuallyWorkingWebSockets"]
 	path = ActuallyWorkingWebSockets
 	url = https://github.com/main--/ActuallyWorkingWebSockets
