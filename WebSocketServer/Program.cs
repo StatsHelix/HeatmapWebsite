@@ -44,7 +44,9 @@ namespace WSS
 			var server = new WebSocketServer(
 				new IPEndPoint(IPAddress.Any, 5501)) { ClientHandler = HandleClient };
 			var serverTask = server.RunAsync();
-			Console.ReadKey(true);
+			
+			System.Threading.Thread.Sleep(int.MaxValue); 
+			
 			server.RequestShutdown();
 			serverTask.Wait();
 		}
