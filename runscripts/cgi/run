@@ -1,0 +1,5 @@
+#!/bin/sh
+echo "changing dir"
+cd ./../../live__/
+echo `pwd`
+./FuckThisFuckingCGIFuck.exe 3 > cgi.log 2>&1

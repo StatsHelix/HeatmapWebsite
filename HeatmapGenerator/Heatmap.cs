@@ -126,7 +126,7 @@ namespace HeatmapGenerator
 			analysis.Rounds.Add(CurrentRound);
 
 			if (!analysis.IsFinished) {
-				analysis.Progress = (double)parser.CurrentTick / parser.Header.PlaybackTicks;
+				analysis.Progress = (double)parser.CurrentTick / parser.Header.PlaybackFrames;
 			}
 
 			if (OnRoundAnalysisFinished != null)

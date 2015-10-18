@@ -1,1 +1,1 @@
-nohup ./FuckThisFuckingCGIFuck.exe 3 > cgi.log 2>&1 & echo $! > cgi.pid
+nohup supervise ./cgi & echo $! > cgi.pid

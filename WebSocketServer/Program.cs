@@ -30,11 +30,11 @@ namespace WSS
 			Trace.Listeners.Add(new ConsoleTraceListener(true));
 			#endif
 
-			if (!Directory.Exists ("demos")) {
-				Directory.CreateDirectory ("demos");
+			if (!Directory.Exists ("demo")) {
+				Directory.CreateDirectory ("demo");
 			}
 
-            Database = new MongoDatastore("DemoInfo");
+            		Database = new MongoDatastore("DemoInfo");
 
 			var contexts = new List<UploadWorkerContext>(Slots);
 			for (int i = 0; i < Slots; i++)
@@ -61,6 +61,7 @@ namespace WSS
 			while (true) {
 				var request = await session.ReceiveObject().WithTimeout(ClientReadTimeout);
 				Debug.WriteLine(((object)request).ToString(), "HandleClient: received request");
+				Console.WriteLine(request.Status);
 				await RequestHandlers[(string)request.Status](session, request);
 			}
 		}

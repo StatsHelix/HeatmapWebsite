@@ -1,0 +1,3 @@
+#!/bin/sh
+cd ./../../live__/
+./WebSocketServer.exe > wss.log 2>&1
